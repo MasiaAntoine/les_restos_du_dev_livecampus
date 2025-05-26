@@ -12,9 +12,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@/components/ui/form';
+import { useContext } from 'react';
 import { Input } from '@/components/ui/input'
-import { signIn } from '@/services/firebase.service.ts'
+import { ServiceContext } from '@/contexts/service.context.ts';
+import type { UserCredential } from 'firebase/auth';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -26,6 +28,8 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
+  const { authService } = useContext(ServiceContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,17 +39,11 @@ export default function LoginPage() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    let userCred
     try {
-      userCred = await signIn(values.email, values.password)
-      console.log(userCred)
-      // On récupère l'utilisateur connecté
-      // On a la meme fonction pour creer un utilisateur
-      // coté création on va utiliser userCred qui sera généré par fireAuth
-      // et utiliser cet id pour créer notre user dans USERS
-      // comme ca fireAuth et fireBase seront synchronisés
+      const userCred: UserCredential = await authService.signIn(values.email, values.password);
+      console.log(userCred);
     } catch (error) {
-      console.error('Erreur de connexion :', error)
+      console.log(error);
     }
   }
 

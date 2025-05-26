@@ -1,17 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import Router from './router'
-import { Route } from 'react-router-dom'
+import { useMemo } from 'react';
+import Router from './router';
+import { FirebaseService } from '@/services/firebase/firebase.service';
+import { AuthService } from '@/services/firebase/auth.service';
+import { ServiceContext } from '@/contexts/service.context';
 
 function App() {
-    const [count, setCount] = useState(0)
+  const firebaseService: FirebaseService = useMemo(() => new FirebaseService(), []);
+  const authService: AuthService = useMemo(() => new AuthService(firebaseService), [firebaseService]);
 
-    return (
-        <>
-            <Router />
-        </>
-    )
+  return (
+    <ServiceContext.Provider value={{ authService }}>
+      <Router/>
+    </ServiceContext.Provider>
+  );
 }
 
-export default App
+export default App;
