@@ -31,7 +31,7 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
-  const authService: AuthService = useContext(AuthContext);
+  const authService: AuthService | null = useContext(AuthContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +42,8 @@ export default function LoginPage() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!authService)
+      return;
     try {
       const userCred: UserCredential = await authService.signIn(values.email, values.password);
       console.log(userCred);

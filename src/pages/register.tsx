@@ -16,6 +16,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useContext } from 'react';
+import { AuthContext } from '@/contexts/contexts.tsx';
+import type { AuthService } from '@/services/firebase/auth.service.ts';
+import type { UserCredential } from 'firebase/auth';
+
 
 const formSchema = z
   .object({
@@ -36,6 +41,8 @@ const formSchema = z
   })
 
 export default function RegisterPage() {
+  const AuthService: AuthService | null = useContext(AuthContext);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +54,17 @@ export default function RegisterPage() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    if (!AuthService)
+      return;
+    try {
+      const userCred: UserCredential = await AuthService.register(
+        values.email,
+        values.password,
+      );
+      console.log(userCred);
+    } catch (error) {
+      console.error('Erreur lors de la création du compte:', error);
+    }
   }
 
   return (
