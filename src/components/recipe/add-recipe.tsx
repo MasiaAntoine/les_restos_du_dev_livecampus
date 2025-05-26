@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Trash2 } from 'lucide-react'
 
 // Schéma pour un ingrédient
 const ingredientSchema = z.object({
@@ -67,6 +68,14 @@ export default function AddRecipeComponent() {
     ])
   }
 
+  const removeIngredient = (indexToRemove: number) => {
+    const currentIngredients = form.getValues('ingredients')
+    form.setValue(
+      'ingredients',
+      currentIngredients.filter((_, index) => index !== indexToRemove)
+    )
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -107,7 +116,7 @@ export default function AddRecipeComponent() {
               <div className="h-[50vh] overflow-y-auto">
                 {' '}
                 {form.watch('ingredients').map((_, index) => (
-                  <div key={index} className="grid grid-cols-4 gap-4 mb-4">
+                  <div key={index} className="flex gap-4 mb-4 items-center">
                     <FormField
                       control={form.control}
                       name={`ingredients.${index}.name`}
@@ -153,6 +162,7 @@ export default function AddRecipeComponent() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name={`ingredients.${index}.unit`}
@@ -166,6 +176,16 @@ export default function AddRecipeComponent() {
                         </FormItem>
                       )}
                     />
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="mt-4"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      <Trash2 className="size-4 text-red-500" />
+                    </Button>
                   </div>
                 ))}
               </div>
