@@ -9,7 +9,7 @@ import { firebaseConfig } from '@/firebase.config.ts';
 
 let firebaseApp: FirebaseApp | undefined
 let firestore: Firestore | undefined
-let fireAuth: Auth | undefine
+let fireAuth: Auth | undefined
 
 export function getApp(): FirebaseApp {
     firebaseApp = firebaseApp ? firebaseApp : initializeApp(firebaseConfig)
