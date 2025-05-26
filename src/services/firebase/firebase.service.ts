@@ -11,7 +11,7 @@ export class FirebaseService {
   readonly #fireStore: Firestore;
   readonly #fireAuth: Auth;
 
-  private constructor() {
+  constructor() {
     this.#firebaseApp = initializeApp(firebaseConfig);
     this.#fireStore = getFirestore(this.#firebaseApp);
     this.#fireAuth = getAuth(this.#firebaseApp);

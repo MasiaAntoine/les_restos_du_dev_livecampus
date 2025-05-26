@@ -15,8 +15,9 @@ import {
 } from '@/components/ui/form';
 import { useContext } from 'react';
 import { Input } from '@/components/ui/input'
-import { ServiceContext } from '@/contexts/service.context.ts';
 import type { UserCredential } from 'firebase/auth';
+import { AuthContext } from '@/contexts/contexts.tsx';
+import type { AuthService } from '@/services/firebase/auth.service.ts';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -28,7 +29,7 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
-  const { authService } = useContext(ServiceContext);
+  const authService: AuthService = useContext(AuthContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
