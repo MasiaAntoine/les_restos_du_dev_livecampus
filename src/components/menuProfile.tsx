@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function MenuProfilePage() {
+export default function MenuProfileComponent() {
   return (
     <>
       <Tabs defaultValue="profile" className="w-[400px]">
@@ -9,6 +9,7 @@ export default function MenuProfilePage() {
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="recipe">Recette</TabsTrigger>
         </TabsList>
+
         <TabsContent value="profile">
           Ici les informations du profil
         </TabsContent>

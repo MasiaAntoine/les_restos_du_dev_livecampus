@@ -1,11 +1,11 @@
 import React from "react";
-import MenuProfileComponent from "@/components/menuProfile";
+import MenuProfileComponents from "@/components/menuProfile";
 
-export default function ProfilePage() {
+export default function RecipePage() {
   return (
     <>
       <div className="flex justify-center w-screen h-screen p-10">
-        <MenuProfileComponent />
+        <MenuProfileComponents />
       </div>
     </>
   );
