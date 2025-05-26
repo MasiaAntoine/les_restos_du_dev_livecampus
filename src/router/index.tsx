@@ -4,7 +4,7 @@ import Home from "../pages/home";
 import Register from "../pages/register";
 import Login from "../pages/login";
 import ForgotPassword from "../pages/forgot-password";
-import Profile from "../pages/profile";
+import Profile from "../pages/profile-menu";
 
 export default function index() {
   return (
