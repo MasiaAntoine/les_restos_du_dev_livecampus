@@ -1,4 +1,11 @@
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -39,6 +46,26 @@ const formSchema = z.object({
     message: 'Ajoutez au moins un ingrédient',
   }),
 })
+
+const ingredients = [
+  { name: 'Farine' },
+  { name: 'Sucre' },
+  { name: 'Œufs' },
+  { name: 'Lait' },
+  { name: 'Beurre' },
+  { name: 'Sel' },
+] as const
+
+const unites = [
+  { value: 'g', label: 'Grammes' },
+  { value: 'kg', label: 'Kilogrammes' },
+  { value: 'ml', label: 'Millilitres' },
+  { value: 'l', label: 'Litres' },
+  { value: 'cs', label: 'Cuillère à soupe' },
+  { value: 'cc', label: 'Cuillère à café' },
+  { value: 'pincee', label: 'Pincée' },
+  { value: 'unite', label: 'Unité' },
+] as const
 
 export default function AddRecipeComponent() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,7 +117,7 @@ export default function AddRecipeComponent() {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
             <FormField
               control={form.control}
               name="name"
@@ -123,22 +150,26 @@ export default function AddRecipeComponent() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nom</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`ingredients.${index}.type`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Ingrédient" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {ingredients.map((ingredient) => (
+                                <SelectItem
+                                  key={ingredient.name}
+                                  value={ingredient.name}
+                                >
+                                  {ingredient.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -169,9 +200,26 @@ export default function AddRecipeComponent() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Unité</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Unité" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {unites.map((unite) => (
+                                <SelectItem
+                                  key={unite.value}
+                                  value={unite.value}
+                                >
+                                  {unite.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
