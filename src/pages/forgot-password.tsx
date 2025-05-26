@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import logo from '@/assets/logo.png'
+
 import {
   Form,
   FormControl,
@@ -37,6 +39,11 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md space-y-8 p-8">
         <div className="text-center">
+          <img
+            src={logo}
+            alt="Les Restos du Dev"
+            className="mx-auto size-50 w-auto mb-4 rounded-full"
+          />
           <h1 className="text-2xl font-bold">
             Réinitialisation du mot de passe
           </h1>
