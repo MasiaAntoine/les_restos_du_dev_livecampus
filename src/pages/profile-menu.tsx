@@ -7,7 +7,7 @@ export default function MenuProfileComponent() {
   return (
     <>
       <div className="flex p-10 justify-center h-screen w-screen">
-        <Tabs defaultValue="info-profile" className="w-[400px]">
+        <Tabs defaultValue="info-profile" className="w-full">
           <TabsList>
             <TabsTrigger value="info-profile">Profile</TabsTrigger>
             <TabsTrigger value="recipe">Recette</TabsTrigger>
