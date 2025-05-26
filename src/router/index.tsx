@@ -1,10 +1,10 @@
-import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../pages/home";
-import Register from "../pages/register";
-import Login from "../pages/login";
-import ForgotPassword from "../pages/forgot-password";
-import Profile from "../pages/profile-menu";
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from '../pages/home'
+import Register from '../pages/register'
+import Login from '../pages/login'
+import ForgotPassword from '../pages/forgot-password'
+import Profile from '../pages/profile-menu'
 
 export default function index() {
   return (
@@ -17,5 +17,5 @@ export default function index() {
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }
