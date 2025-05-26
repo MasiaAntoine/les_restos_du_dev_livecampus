@@ -3,14 +3,18 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { FirebaseService} from './firebase.service';
+import { FirebaseService } from './firebase.service.tsx';
 
 export class AuthService {
   #firebaseService: FirebaseService;
-  userCredential: UserCredential | null = null;
+  firebaseUser:  UserCredential | null = null;
 
   constructor(firebaseService: FirebaseService) {
     this.#firebaseService = firebaseService;
+  }
+
+  get connectedUserUid(): string | null {
+    return this.firebaseUser?.user?.uid ?? null;
   }
 
   public async signIn(email: string, password: string): Promise<UserCredential> {

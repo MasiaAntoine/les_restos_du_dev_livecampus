@@ -1,10 +1,9 @@
-import { initializeApp } from 'firebase/app';
-import type { FirebaseApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
-import type { Auth } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { doc, Firestore, getDoc, setDoc, getFirestore, type DocumentData } from 'firebase/firestore';
+import { getAuth, type Auth } from 'firebase/auth';
 // @ts-expect-error
 import { firebaseConfig } from '/firebase.config';
+
 
 export class FirebaseService {
   readonly #firebaseApp: FirebaseApp;
@@ -27,5 +26,15 @@ export class FirebaseService {
 
   public getFireAuth(): Auth {
     return this.#fireAuth ? this.#fireAuth : getAuth(this.getApp());
+  }
+
+  public async getDocument<T extends DocumentData = DocumentData>(path: string): Promise<T | undefined> {
+    const docSnapshot = await getDoc(doc(getFirestore(), path));
+    return docSnapshot.data() as T;
+  }
+
+  public async setDocument<T extends DocumentData = DocumentData>(path: string, data: T): Promise<void> {
+    const docRef = doc(this.getFs(), path);
+    return setDoc(docRef, data);
   }
 }

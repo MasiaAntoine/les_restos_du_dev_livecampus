@@ -18,8 +18,9 @@ import {
 import { useContext } from 'react';
 import { Input } from '@/components/ui/input'
 import type { UserCredential } from 'firebase/auth';
-import { AuthContext } from '@/contexts/contexts.tsx';
-import type { AuthService } from '@/services/firebase/auth.service.ts';
+import { AuthContext, type Services } from '@/contexts/contexts.tsx';
+import type { AuthService } from '@/services/firebase/auth.service.tsx';
+import type { UserService } from '@/services/firebase/user.service';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,7 +32,9 @@ const formSchema = z.object({
 })
 
 export default function LoginPage() {
-  const authService: AuthService | null = useContext(AuthContext);
+  const services: Services | null = useContext(AuthContext);
+  const authService: AuthService | undefined = services?.authService;
+  const userService: UserService | undefined = services?.userService;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,11 +45,12 @@ export default function LoginPage() {
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!authService)
+    if (!authService || !userService)
       return;
     try {
       const userCred: UserCredential = await authService.signIn(values.email, values.password);
-      console.log(userCred);
+
+      await userService.getUserByUid(userCred.user.uid);
     } catch (error) {
       console.log(error);
     }
