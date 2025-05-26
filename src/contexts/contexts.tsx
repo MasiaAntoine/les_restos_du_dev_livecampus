@@ -7,4 +7,4 @@ export type Services = {
   userService: UserService;
 };
 
-export const AuthContext= createContext<Services | null>(null);
+export const ServicesContext = createContext<Services | null>(null);

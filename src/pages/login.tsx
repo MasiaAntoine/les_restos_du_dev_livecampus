@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import logo from '@/assets/logo.png'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import logo from '@/assets/logo.png';
 
 import {
   Form,
@@ -16,9 +16,9 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useContext } from 'react';
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/input';
 import type { UserCredential } from 'firebase/auth';
-import { AuthContext, type Services } from '@/contexts/contexts.tsx';
+import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
 import type { UserService } from '@/services/firebase/user.service';
 
@@ -29,10 +29,10 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: 'Le mot de passe doit contenir au moins 6 caractères.',
   }),
-})
+});
 
 export default function LoginPage() {
-  const services: Services | null = useContext(AuthContext);
+  const services: Services | null = useContext(ServicesContext);
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
 
@@ -42,11 +42,12 @@ export default function LoginPage() {
       email: '',
       password: '',
     },
-  })
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!authService || !userService)
+    if (!authService || !userService) {
       return;
+    }
     try {
       const userCred: UserCredential = await authService.signIn(values.email, values.password);
 
@@ -54,7 +55,7 @@ export default function LoginPage() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -92,7 +93,7 @@ export default function LoginPage() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -106,7 +107,7 @@ export default function LoginPage() {
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />

@@ -7,7 +7,7 @@ import { FirebaseService } from './firebase.service.tsx';
 
 export class AuthService {
   #firebaseService: FirebaseService;
-  firebaseUser:  UserCredential | null = null;
+  firebaseUser: UserCredential | null = null;
 
   constructor(firebaseService: FirebaseService) {
     this.#firebaseService = firebaseService;

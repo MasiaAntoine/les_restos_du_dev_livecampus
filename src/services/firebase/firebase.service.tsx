@@ -4,7 +4,6 @@ import { getAuth, type Auth } from 'firebase/auth';
 // @ts-expect-error
 import { firebaseConfig } from '/firebase.config';
 
-
 export class FirebaseService {
   readonly #firebaseApp: FirebaseApp;
   readonly #fireStore: Firestore;

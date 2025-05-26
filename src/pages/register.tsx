@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useContext } from 'react';
-import { AuthContext, type Services } from '@/contexts/contexts.tsx';
+import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
 import type { UserCredential } from 'firebase/auth';
 import type { UserService } from '@/services/firebase/user.service.tsx';
@@ -41,7 +41,7 @@ const formSchema = z
   });
 
 export default function RegisterPage() {
-  const services: Services | null = useContext(AuthContext);
+  const services: Services | null = useContext(ServicesContext);
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
 
@@ -162,5 +162,5 @@ export default function RegisterPage() {
         </Form>
       </div>
     </div>
-  )
+  );
 }
