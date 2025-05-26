@@ -4,7 +4,7 @@ import type { DocumentData, DocumentSnapshot } from 'firebase/firestore'
 import { Firestore, getFirestore, doc, getDoc } from 'firebase/firestore'
 import type { Auth, UserCredential } from 'firebase/auth'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { firebaseConfig } from '@/firebase.config.ts';
+import { firebaseConfig } from 'firebase.config.ts';
 
 
 let firebaseApp: FirebaseApp | undefined
