@@ -1,6 +1,6 @@
 import React from "react";
 import MenuProfileComponents from "@/components/ui/menu";
-import RecipeCard from "./recipeCard";
+import RecipeCard from "./card-recipe";
 import AddRecipe from "./add-recipe";
 
 import {
