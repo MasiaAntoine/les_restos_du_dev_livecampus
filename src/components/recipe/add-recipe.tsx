@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Select,
   SelectContent,
@@ -32,7 +34,6 @@ import { Trash2 } from 'lucide-react'
 const ingredientSchema = z.object({
   id: z.string(),
   name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
-  type: z.string().min(1, { message: 'Le type est requis' }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
   unit: z.string().min(1, { message: "L'unité est requise" }),
 })
@@ -76,9 +77,8 @@ export default function AddRecipeComponent() {
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    // Ici vous pourrez ajouter la logique pour sauvegarder la recette
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log('Formulaire soumis:', values)
   }
 
   const addIngredient = () => {
@@ -117,7 +117,7 @@ export default function AddRecipeComponent() {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
