@@ -1,3 +1,12 @@
+'use client'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Dialog,
   DialogContent,
@@ -19,12 +28,12 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Trash2 } from 'lucide-react'
 
 // Schéma pour un ingrédient
 const ingredientSchema = z.object({
   id: z.string(),
   name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
-  type: z.string().min(1, { message: 'Le type est requis' }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
   unit: z.string().min(1, { message: "L'unité est requise" }),
 })
@@ -39,6 +48,26 @@ const formSchema = z.object({
   }),
 })
 
+const ingredients = [
+  { name: 'Farine' },
+  { name: 'Sucre' },
+  { name: 'Œufs' },
+  { name: 'Lait' },
+  { name: 'Beurre' },
+  { name: 'Sel' },
+] as const
+
+const unites = [
+  { value: 'g', label: 'Grammes' },
+  { value: 'kg', label: 'Kilogrammes' },
+  { value: 'ml', label: 'Millilitres' },
+  { value: 'l', label: 'Litres' },
+  { value: 'cs', label: 'Cuillère à soupe' },
+  { value: 'cc', label: 'Cuillère à café' },
+  { value: 'pincee', label: 'Pincée' },
+  { value: 'unite', label: 'Unité' },
+] as const
+
 export default function AddRecipeComponent() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,9 +77,8 @@ export default function AddRecipeComponent() {
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
-    // Ici vous pourrez ajouter la logique pour sauvegarder la recette
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log('Formulaire soumis:', values)
   }
 
   const addIngredient = () => {
@@ -65,6 +93,14 @@ export default function AddRecipeComponent() {
         unit: '',
       },
     ])
+  }
+
+  const removeIngredient = (indexToRemove: number) => {
+    const currentIngredients = form.getValues('ingredients')
+    form.setValue(
+      'ingredients',
+      currentIngredients.filter((_, index) => index !== indexToRemove)
+    )
   }
 
   return (
@@ -104,68 +140,103 @@ export default function AddRecipeComponent() {
                 </Button>
               </div>
 
-              {form.watch('ingredients').map((_, index) => (
-                <div key={index} className="grid grid-cols-4 gap-4 mb-4">
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nom</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.type`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.quantity`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Quantité</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`ingredients.${index}.unit`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Unité</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              ))}
+              <div className="h-[50vh] overflow-y-auto">
+                {' '}
+                {form.watch('ingredients').map((_, index) => (
+                  <div key={index} className="flex gap-4 mb-4 items-center">
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Ingrédient" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {ingredients.map((ingredient) => (
+                                <SelectItem
+                                  key={ingredient.name}
+                                  value={ingredient.name}
+                                >
+                                  {ingredient.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.quantity`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quantité</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(Number(e.target.value))
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.unit`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Unité</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Unité" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {unites.map((unite) => (
+                                <SelectItem
+                                  key={unite.value}
+                                  value={unite.value}
+                                >
+                                  {unite.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="mt-4"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      <Trash2 className="size-4 text-red-500" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Button type="submit" className="w-full">
