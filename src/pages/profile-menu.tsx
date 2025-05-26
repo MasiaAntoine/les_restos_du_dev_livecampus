@@ -7,17 +7,17 @@ export default function MenuProfileComponent() {
   return (
     <>
       <div className="flex p-10 justify-center h-screen w-screen">
-        <Tabs defaultValue="info-profile" className="w-full">
+        <Tabs defaultValue="recipe" className="w-full">
           <TabsList>
+            <TabsTrigger value="recipe">Recette</TabsTrigger>{" "}
             <TabsTrigger value="info-profile">Profile</TabsTrigger>
-            <TabsTrigger value="recipe">Recette</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="info-profile">
-            <ProfileComponent />
-          </TabsContent>
           <TabsContent value="recipe">
             <RecipeComponent />
+          </TabsContent>
+          <TabsContent value="info-profile">
+            <ProfileComponent />
           </TabsContent>
         </Tabs>
       </div>
