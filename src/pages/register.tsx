@@ -21,6 +21,7 @@ import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
 import type { UserCredential } from 'firebase/auth';
 import type { UserService } from '@/services/firebase/user.service.tsx';
+import type { UserModel } from '@/models/User.model.tsx';
 
 const formSchema = z
   .object({
@@ -65,7 +66,12 @@ export default function RegisterPage() {
         values.password,
       );
       if (userCred.user) {
-        await userService.createUser({ uid: userCred.user.uid });
+        const userData: UserModel = {
+          uid: userCred.user.uid,
+          displayName: values.username,
+          email: values.email,
+        }
+        await userService.createUser(userData);
       }
     } catch (error) {
       console.error('Erreur lors de la création du compte:', error);

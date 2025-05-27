@@ -1,4 +1,4 @@
-import { UnitModel } from './UnitModel.model'
+import type { UnitModel } from './UnitModel.model';
 
 export interface IngredientModel {
   id: string
