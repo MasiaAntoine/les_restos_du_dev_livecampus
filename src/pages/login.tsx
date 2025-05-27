@@ -1,11 +1,12 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Link, type NavigateFunction, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import logo from '@/assets/logo.png';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Link, type NavigateFunction, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import logo from '@/assets/logo.png'
+import { toast } from 'sonner'
 
 import {
   Form,
@@ -14,13 +15,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { useContext } from 'react';
-import { Input } from '@/components/ui/input';
-import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
-import type { AuthService } from '@/services/firebase/auth.service.tsx';
-import type { UserService } from '@/services/firebase/user.service';
-import type { RecipesService } from '@/services/firebase/recipes.service.ts';
+} from '@/components/ui/form'
+import { useContext } from 'react'
+import { Input } from '@/components/ui/input'
+import { ServicesContext, type Services } from '@/contexts/contexts.tsx'
+import type { AuthService } from '@/services/firebase/auth.service.tsx'
+import type { UserService } from '@/services/firebase/user.service'
+import type { RecipesService } from '@/services/firebase/recipes.service.ts'
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,14 +30,14 @@ const formSchema = z.object({
   password: z.string().min(6, {
     message: 'Le mot de passe doit contenir au moins 6 caractères.',
   }),
-});
+})
 
 export default function LoginPage() {
-  const services: Services | null = useContext(ServicesContext);
-  const authService: AuthService | undefined = services?.authService;
-  const userService: UserService | undefined = services?.userService;
-  const recipesService: RecipesService | undefined = services?.recipesService;
-  const navigate: NavigateFunction = useNavigate();
+  const services: Services | null = useContext(ServicesContext)
+  const authService: AuthService | undefined = services?.authService
+  const userService: UserService | undefined = services?.userService
+  const recipesService: RecipesService | undefined = services?.recipesService
+  const navigate: NavigateFunction = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,20 +45,22 @@ export default function LoginPage() {
       email: '',
       password: '',
     },
-  });
+  })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!authService || !userService) {
-      return;
+      return
     }
     try {
-      console.log(await recipesService?.getAllRecipes());
-      await authService.signIn(values.email, values.password);
-      navigate('/profile');
+      console.log(await recipesService?.getAllRecipes())
+      await authService.signIn(values.email, values.password)
+      toast.success('Connexion réussie')
+      navigate('/profile')
     } catch (error) {
-      console.log(error);
+      console.log(error)
+      toast.error('Erreur lors de la connexion')
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -95,7 +98,7 @@ export default function LoginPage() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -109,7 +112,7 @@ export default function LoginPage() {
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -132,5 +135,5 @@ export default function LoginPage() {
         </Form>
       </div>
     </div>
-  );
+  )
 }

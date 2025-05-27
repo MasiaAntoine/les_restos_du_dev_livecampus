@@ -1,11 +1,12 @@
-'use client';
+'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Link, type NavigateFunction, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import logo from '@/assets/logo.png';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Link, type NavigateFunction, useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
+import logo from '@/assets/logo.png'
+import { toast } from 'sonner'
 
 import {
   Form,
@@ -14,17 +15,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { useContext } from 'react';
-import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
-import type { AuthService } from '@/services/firebase/auth.service.tsx';
-import type { UserService } from '@/services/firebase/user.service.tsx';
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { useContext } from 'react'
+import { ServicesContext, type Services } from '@/contexts/contexts.tsx'
+import type { AuthService } from '@/services/firebase/auth.service.tsx'
+import type { UserService } from '@/services/firebase/user.service.tsx'
 
 const formSchema = z
   .object({
     username: z.string().min(2, {
-      message: 'Le nom d\'utilisateur doit contenir au moins 2 caractères.',
+      message: "Le nom d'utilisateur doit contenir au moins 2 caractères.",
     }),
     email: z.string().email({
       message: 'Veuillez entrer une adresse email valide.',
@@ -37,13 +38,13 @@ const formSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Les mots de passe ne correspondent pas',
     path: ['confirmPassword'],
-  });
+  })
 
 export default function RegisterPage() {
-  const services: Services | null = useContext(ServicesContext);
-  const authService: AuthService | undefined = services?.authService;
-  const userService: UserService | undefined = services?.userService;
-  const navigate: NavigateFunction = useNavigate();
+  const services: Services | null = useContext(ServicesContext)
+  const authService: AuthService | undefined = services?.authService
+  const userService: UserService | undefined = services?.userService
+  const navigate: NavigateFunction = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,22 +54,30 @@ export default function RegisterPage() {
       password: '',
       confirmPassword: '',
     },
-  });
+  })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!authService || !userService) {
-      return;
+      return
     }
 
     try {
-      await authService.register(values.email, values.password, values.username)
+      await authService
+        .register(values.email, values.password, values.username)
         .then((isSuccess) => {
-        return isSuccess ? navigate('/login') : console.error('Erreur lors de la création du compte');
-      });
+          if (isSuccess) {
+            toast.success('Compte créé avec succès')
+            navigate('/login')
+          } else {
+            toast.error('Erreur lors de la création du compte')
+            console.error('Erreur lors de la création du compte')
+          }
+        })
     } catch (error) {
-      console.error('Erreur lors de la création du compte:', error);
+      console.error('Erreur lors de la création du compte:', error)
+      toast('Erreur lors de la création du compte:', error)
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -102,7 +111,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <Input placeholder="John Doe" {...field} />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -120,7 +129,7 @@ export default function RegisterPage() {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -134,7 +143,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -148,7 +157,7 @@ export default function RegisterPage() {
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -160,5 +169,5 @@ export default function RegisterPage() {
         </Form>
       </div>
     </div>
-  );
+  )
 }
