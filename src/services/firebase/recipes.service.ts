@@ -11,7 +11,6 @@ export class RecipesService {
 
   async #getRecipeIngredients(recipeId: string): Promise<RecipePartModel[]> {
     return await this.#fs.getAllDocuments<RecipePartModel>('RECIPES/' + recipeId + '/INGREDIENTS');
-
   }
 
   public async getAllRecipes(): Promise<RecipeModel[]> {
@@ -37,7 +36,7 @@ export class RecipesService {
       fieldName: 'author',
       operator: '==',
       value: author,
-    }
+    };
     const recipes: RecipeModel[] = await this.#fs.getDocumentsWhere<RecipeModel>('RECIPES', [query], 'title');
     for (const recipe of recipes) {
       recipe.ingredients = await this.#getRecipeIngredients(recipe.id);

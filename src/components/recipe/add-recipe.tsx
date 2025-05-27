@@ -94,10 +94,10 @@ export default function AddRecipeComponent({
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const newRecipe = {
-      id: Math.floor(Math.random() * 1000), // Génération d'un ID temporaire
+      id: Math.floor(Math.random() * 1000), // Pas besoin d'id firebase le genere tout seul
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
-      author: 'Utilisateur', // À remplacer par l'utilisateur connecté
+      author: 'Utilisateur', // L'uid de l'utilisateur
       imageUrl: 'https://via.placeholder.com/150', // Image par défaut
       ingredients: values.ingredients,
     }
