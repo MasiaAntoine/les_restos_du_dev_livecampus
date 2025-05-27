@@ -50,13 +50,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white truncate">{title}</h3>
+            <h3
+              className="text-lg font-bold text-white truncate"
+              data-testid="recipe-title"
+            >
+              {title}
+            </h3>
             {showDetailsButton && (
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="ghost"
                     className="h-8 w-8 p-0 bg-white/10 hover:bg-white/20 rounded-md"
+                    data-testid="recipe-more-button"
                   >
                     <MoreVertical className="h-4 w-4 text-white" />
                   </Button>
@@ -67,6 +73,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                       variant="ghost"
                       className="w-full justify-start"
                       onClick={handleEdit}
+                      data-testid="recipe-edit-button"
                     >
                       Modifier
                     </Button>
@@ -74,6 +81,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                       variant="ghost"
                       className="w-full justify-start text-red-500 hover:text-red-600"
                       onClick={handleDelete}
+                      data-testid="recipe-delete-button"
                     >
                       Supprimer
                     </Button>
@@ -88,7 +96,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       <div className="p-4 space-y-2">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center space-x-2">
-            <span className="flex items-center">
+            <span className="flex items-center" data-testid="recipe-cook-time">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 mr-1"
@@ -107,7 +115,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="flex items-center">
+            <span className="flex items-center" data-testid="recipe-author">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 mr-1"
