@@ -170,7 +170,11 @@ export default function EditRecipeComponent({
                 <FormItem>
                   <FormLabel>Nom de la recette</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Tarte aux pommes" {...field} />
+                    <Input
+                      placeholder="Ex: Tarte aux pommes"
+                      {...field}
+                      data-testid="recipe-name-input"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,13 +192,20 @@ export default function EditRecipeComponent({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        className="w-full"
+                        data-testid="recipe-time-select"
+                      >
                         <SelectValue placeholder="Sélectionner le temps de préparation" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {preparationTimes.map((time) => (
-                        <SelectItem key={time.value} value={time.value}>
+                        <SelectItem
+                          key={time.value}
+                          value={time.value}
+                          data-testid={`time-option-${time.value}`}
+                        >
                           {time.label}
                         </SelectItem>
                       ))}
@@ -208,7 +219,11 @@ export default function EditRecipeComponent({
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-medium">Ingrédients</h3>
-                <Button type="button" onClick={addIngredient}>
+                <Button
+                  type="button"
+                  onClick={addIngredient}
+                  data-testid="add-ingredient-button"
+                >
                   Ajouter un ingrédient
                 </Button>
               </div>
@@ -227,7 +242,9 @@ export default function EditRecipeComponent({
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger
+                                data-testid={`ingredient-name-select-${index}`}
+                              >
                                 <SelectValue placeholder="Ingrédient" />
                               </SelectTrigger>
                             </FormControl>
@@ -236,6 +253,7 @@ export default function EditRecipeComponent({
                                 <SelectItem
                                   key={ingredient.name}
                                   value={ingredient.name}
+                                  data-testid={`ingredient-option-${ingredient.name}`}
                                 >
                                   {ingredient.name}
                                 </SelectItem>
@@ -259,6 +277,7 @@ export default function EditRecipeComponent({
                               onChange={(e) =>
                                 field.onChange(Number(e.target.value))
                               }
+                              data-testid={`ingredient-quantity-input-${index}`}
                             />
                           </FormControl>
                           <FormMessage />
@@ -277,7 +296,9 @@ export default function EditRecipeComponent({
                             defaultValue={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
+                              <SelectTrigger
+                                data-testid={`ingredient-unit-select-${index}`}
+                              >
                                 <SelectValue placeholder="Unité" />
                               </SelectTrigger>
                             </FormControl>
@@ -286,6 +307,7 @@ export default function EditRecipeComponent({
                                 <SelectItem
                                   key={unite.value}
                                   value={unite.value}
+                                  data-testid={`unit-option-${unite.value}`}
                                 >
                                   {unite.label}
                                 </SelectItem>
@@ -303,6 +325,7 @@ export default function EditRecipeComponent({
                       size="icon"
                       className="mt-4"
                       onClick={() => removeIngredient(index)}
+                      data-testid={`remove-ingredient-button-${index}`}
                     >
                       <Trash2 className="size-4 text-red-500" />
                     </Button>
@@ -311,7 +334,11 @@ export default function EditRecipeComponent({
               </div>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              data-testid="submit-edit-form"
+            >
               Enregistrer les modifications
             </Button>
           </form>

@@ -9,7 +9,20 @@ const recipe = {
   author: 'Chef John',
   cookTime: '30 min',
   imageUrl: '/images/carbonara.jpg',
-  ingredients: [],
+  ingredients: [
+    {
+      id: '1',
+      name: 'Pâtes',
+      quantity: 500,
+      unit: 'g',
+    },
+    {
+      id: '2',
+      name: 'Lardons',
+      quantity: 200,
+      unit: 'g',
+    },
+  ],
   onDelete: vi.fn(),
   onEdit: vi.fn(),
 }
@@ -104,18 +117,78 @@ describe('RecipeCard Component', () => {
     })
   })
 
-  // describe('Gestion des erreurs', () => {
-  // test('affiche une image par défaut quand imageUrl est invalide', () => {
-  //   render(<RecipeCard {...recipe} imageUrl="invalid-url" />)
-  //   const images = screen.getAllByRole('img')
-  //   const targetImage = images.find(
-  //     (img) => img.getAttribute('src') === 'invalid-url'
-  //   )
-  //   expect(targetImage).toBeInTheDocument()
-  //   expect(targetImage).toHaveAttribute(
-  //     'alt',
-  //     expect.stringMatching(/pâtes carbonara/i)
-  //   )
-  // })
-  // })
+  describe('Gestion des ingrédients', () => {
+    test('passe les ingrédients au composant EditRecipe', () => {
+      render(<RecipeCard {...recipe} showDetailsButton={true} />)
+
+      const moreButton = screen.getByTestId('recipe-more-button')
+      fireEvent.click(moreButton)
+
+      const editButton = screen.getByTestId('recipe-edit-button')
+      fireEvent.click(editButton)
+
+      // Vérifie que les ingrédients sont présents dans le formulaire
+      recipe.ingredients.forEach((_, index) => {
+        expect(
+          screen.getByTestId(`ingredient-name-select-${index}`)
+        ).toBeInTheDocument()
+      })
+    })
+
+    // test('appelle onEdit avec les ingrédients mis à jour', () => {
+    //   const handleEdit = vi.fn()
+    //   render(
+    //     <RecipeCard {...recipe} showDetailsButton={true} onEdit={handleEdit} />
+    //   )
+
+    //   const moreButton = screen.getByTestId('recipe-more-button')
+    //   fireEvent.click(moreButton)
+
+    //   const editButton = screen.getByTestId('recipe-edit-button')
+    //   fireEvent.click(editButton)
+
+    //   // Modifie un ingrédient
+    //   const ingredientNameSelect = screen.getByTestId(
+    //     'ingredient-name-select-0'
+    //   )
+    //   fireEvent.click(ingredientNameSelect)
+    //   const ingredientOption = screen.getByTestId('ingredient-option-Farine')
+    //   fireEvent.click(ingredientOption)
+
+    //   const ingredientQuantityInput = screen.getByTestId(
+    //     'ingredient-quantity-input-0'
+    //   )
+    //   fireEvent.change(ingredientQuantityInput, { target: { value: '300' } })
+
+    //   const ingredientUnitSelect = screen.getByTestId(
+    //     'ingredient-unit-select-0'
+    //   )
+    //   fireEvent.click(ingredientUnitSelect)
+    //   const unitOption = screen.getByTestId('unit-option-kg')
+    //   fireEvent.click(unitOption)
+
+    //   // Soumet le formulaire
+    //   const submitButton = screen.getByTestId('submit-edit-form')
+    //   fireEvent.click(submitButton)
+
+    //   expect(handleEdit).toHaveBeenCalledWith(
+    //     recipe.id,
+    //     expect.objectContaining({
+    //       id: recipe.id,
+    //       title: recipe.title,
+    //       cookTime: expect.stringMatching(/\d+ minutes/),
+    //       author: 'Utilisateur',
+    //       imageUrl: 'https://via.placeholder.com/150',
+    //       ingredients: expect.arrayContaining([
+    //         expect.objectContaining({
+    //           id: expect.any(String),
+    //           name: 'Farine',
+    //           quantity: 300,
+    //           unit: 'kg',
+    //         }),
+    //       ]),
+    //     })
+    //   )
+    // })
+  })
 })
