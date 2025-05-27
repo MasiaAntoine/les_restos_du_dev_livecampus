@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Link } from 'react-router-dom';
+import { Link, type NavigateFunction, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo.png';
 
@@ -45,6 +45,7 @@ export default function RegisterPage() {
   const services: Services | null = useContext(ServicesContext);
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
+  const navigate:  NavigateFunction = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +72,7 @@ export default function RegisterPage() {
           displayName: values.username,
           email: values.email,
         }
-        await userService.createUser(userData);
+        await userService.createUser(userData).then(() => navigate('/profile'));
       }
     } catch (error) {
       console.error('Erreur lors de la création du compte:', error);

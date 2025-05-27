@@ -17,10 +17,14 @@ export class AuthService {
   public async signIn(email: string, password: string): Promise<UserCredential> {
     const userCredential: UserCredential = await signInWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
     this.#setcurrentUser(userCredential.user);
+
     return userCredential;
   }
 
   public async register(email: string, password: string): Promise<UserCredential> {
-    return await createUserWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
+    const userCredential: UserCredential = await createUserWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
+    this.#setcurrentUser(userCredential.user);
+
+    return userCredential;
   }
 }
