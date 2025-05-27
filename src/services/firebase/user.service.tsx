@@ -1,4 +1,5 @@
 import type { FirebaseService } from './firebase.service';
+import type { UserModel } from '@/models/User.model.tsx';
 
 export class UserService {
   #firebaseService: FirebaseService;
@@ -17,11 +18,11 @@ export class UserService {
     return;
   }
 
-  public async createUser(data: any) {
-    if (!data || !data.uid) {
+  public async createUser(user: UserModel) {
+    if (!user || !user.uid) {
       throw new Error('Invalid user data');
     }
 
-    return this.#firebaseService.setDocument('USERS' + '/' + data.uid, data);
+    return this.#firebaseService.setDocument('USERS' + '/' + user.uid, user);
   }
 }
