@@ -9,6 +9,9 @@ const recipe = {
   author: 'Chef John',
   cookTime: '30 min',
   imageUrl: '/images/carbonara.jpg',
+  ingredients: [],
+  onDelete: vi.fn(),
+  onEdit: vi.fn(),
 }
 
 describe('RecipeCard Component', () => {

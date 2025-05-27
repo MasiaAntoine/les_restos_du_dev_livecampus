@@ -1,8 +1,33 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { doc, Firestore, getDoc, setDoc, getFirestore, type DocumentData } from 'firebase/firestore';
+import {
+  Firestore,
+  getFirestore,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  type DocumentData,
+  type WhereFilterOp,
+  type OrderByDirection,
+  type Query,
+} from 'firebase/firestore';
 import { getAuth, type Auth } from 'firebase/auth';
-// @ts-expect-error
 import { firebaseConfig } from '/firebase.config';
+
+export type QueryWhereElement<T> = {
+  fieldName: keyof T;
+  operator: WhereFilterOp;
+  value: unknown;
+}
+type Order<T> = {
+  fieldName: keyof T,
+  direction: OrderByDirection
+}
+
 
 export class FirebaseService {
   readonly #firebaseApp: FirebaseApp;
@@ -35,5 +60,41 @@ export class FirebaseService {
   public async setDocument<T extends DocumentData = DocumentData>(path: string, data: T): Promise<void> {
     const docRef = doc(this.getFs(), path);
     return setDoc(docRef, data);
+  }
+
+  public async deleteDocument(path: string): Promise<void> {
+    const docRef = doc(this.getFs(), path);
+    return setDoc(docRef, {}, { merge: true });
+  }
+
+  public async getAllDocuments<T>(collectionName: string): Promise<T[]> {
+    const c = collection(getFirestore(), collectionName);
+    const querySnapshot = await getDocs(c);
+    return querySnapshot.docs.map(d => d.data() as T);
+  }
+
+  public async getDocumentsWhere<T>(collectionName: string, queryWhere: QueryWhereElement<T>[] = [], order?: keyof T | Order<T>): Promise<T[]> {
+    const c = collection(getFirestore(), collectionName);
+    const q = this.constructQuery(c, queryWhere, order);
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(d => d.data() as T);
+  }
+
+  public constructQuery<T>(originalQuery: Query, queryWhere: QueryWhereElement<T>[] = [], order?: keyof T | Order<T>): Query {
+    let q = originalQuery;
+    for (const whereOption of queryWhere) {
+      q = query(q, where(whereOption.fieldName as string, whereOption.operator, whereOption.value));
+    }
+
+    if (order) {
+      if (typeof order === 'string') {
+        q = query(q, orderBy(order));
+      } else {
+        const o = order as Order<T>;
+        q = query(q, orderBy(o.fieldName as string, o.direction));
+      }
+    }
+
+    return q;
   }
 }

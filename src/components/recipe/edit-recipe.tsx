@@ -31,7 +31,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Trash2 } from 'lucide-react'
 
-// Schéma pour un ingrédient
+// Schéma pour un ingrédient (même que dans add-recipe)
 const ingredientSchema = z.object({
   id: z.string(),
   name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
@@ -39,7 +39,7 @@ const ingredientSchema = z.object({
   unit: z.string().min(1, { message: "L'unité est requise" }),
 })
 
-// Schéma du formulaire
+// Schéma du formulaire (même que dans add-recipe)
 const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Le nom de la recette doit contenir au moins 2 caractères.',
@@ -77,34 +77,48 @@ const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
   label: `${(i + 1) * 5} min`,
 }))
 
-export default function AddRecipeComponent({
-  onRecipeAdd,
-}: {
-  onRecipeAdd: (recipe: object) => void
-}) {
+interface EditRecipeProps {
+  recipe: {
+    id: number
+    title: string
+    cookTime: string
+    ingredients: Array<{
+      id: string
+      name: string
+      quantity: number
+      unit: string
+    }>
+  }
+  onRecipeEdit: (id: number, updatedRecipe: object) => void
+}
+
+export default function EditRecipeComponent({
+  recipe,
+  onRecipeEdit,
+}: EditRecipeProps) {
   const [open, setOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      ingredients: [],
+      name: recipe.title,
+      preparationTime: recipe.cookTime.split(' ')[0], // Extrait le nombre de minutes
+      ingredients: recipe.ingredients,
     },
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const newRecipe = {
-      id: Math.floor(Math.random() * 1000), // Pas besoin d'id firebase le genere tout seul
+    const updatedRecipe = {
+      id: recipe.id,
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
-      author: 'Utilisateur', // L'uid de l'utilisateur
-      imageUrl: 'https://via.placeholder.com/150', // Image par défaut
+      author: 'Utilisateur', // À remplacer par l'utilisateur connecté
+      imageUrl: 'https://via.placeholder.com/150',
       ingredients: values.ingredients,
     }
 
-    onRecipeAdd(newRecipe)
+    onRecipeEdit(recipe.id, updatedRecipe)
     setOpen(false)
-    form.reset()
   }
 
   const addIngredient = () => {
@@ -114,7 +128,6 @@ export default function AddRecipeComponent({
       {
         id: Math.random().toString(36).substr(2, 9),
         name: '',
-        type: '',
         quantity: 0,
         unit: '',
       },
@@ -132,13 +145,19 @@ export default function AddRecipeComponent({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="mb-4">Créer une recette</Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start "
+          data-testid="recipe-edit-button"
+        >
+          Modifier
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>Créer une nouvelle recette</DialogTitle>
+          <DialogTitle>Modifier la recette</DialogTitle>
           <DialogDescription>
-            Remplissez le formulaire pour ajouter une nouvelle recette.
+            Modifiez les informations de la recette.
           </DialogDescription>
         </DialogHeader>
 
@@ -195,7 +214,6 @@ export default function AddRecipeComponent({
               </div>
 
               <div className="h-[50vh] overflow-y-auto">
-                {' '}
                 {form.watch('ingredients').map((_, index) => (
                   <div key={index} className="flex gap-4 mb-4 items-center">
                     <FormField
@@ -294,7 +312,7 @@ export default function AddRecipeComponent({
             </div>
 
             <Button type="submit" className="w-full">
-              Créer la recette
+              Enregistrer les modifications
             </Button>
           </form>
         </Form>

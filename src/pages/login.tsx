@@ -21,6 +21,7 @@ import type { UserCredential } from 'firebase/auth';
 import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
 import type { UserService } from '@/services/firebase/user.service';
+import type { RecipesService } from '@/services/firebase/recipes.service.ts';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -35,6 +36,7 @@ export default function LoginPage() {
   const services: Services | null = useContext(ServicesContext);
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
+  const recipesService: RecipesService | undefined = services?.recipesService;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +51,7 @@ export default function LoginPage() {
       return;
     }
     try {
+      console.log(await recipesService?.getAllRecipes());
       const userCred: UserCredential = await authService.signIn(values.email, values.password);
 
       await userService.getUserByUid(userCred.user.uid);
