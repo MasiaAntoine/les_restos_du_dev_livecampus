@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -15,11 +15,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Button } from '../ui/button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+} from '@/components/ui/dialog';
+import { Button } from '../ui/button';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -27,17 +27,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Trash2 } from 'lucide-react'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Trash2 } from 'lucide-react';
+import type { RecipeModel } from '@/models/Recipe.model.ts';
 
 // Schéma pour un ingrédient (même que dans add-recipe)
 const ingredientSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
+  ingredientId: z.string(),
+  name: z.string().min(1, { message: 'Le nom de l\'ingrédient est requis' }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
-  unit: z.string().min(1, { message: "L'unité est requise" }),
-})
+  unit: z.string().min(1, { message: 'L\'unité est requise' }),
+});
 
 // Schéma du formulaire (même que dans add-recipe)
 const formSchema = z.object({
@@ -50,7 +51,7 @@ const formSchema = z.object({
   ingredients: z.array(ingredientSchema).min(1, {
     message: 'Ajoutez au moins un ingrédient',
   }),
-})
+});
 
 const ingredients = [
   { name: 'Farine' },
@@ -59,7 +60,7 @@ const ingredients = [
   { name: 'Lait' },
   { name: 'Beurre' },
   { name: 'Sel' },
-] as const
+] as const;
 
 const unites = [
   { value: 'g', label: 'Grammes' },
@@ -70,33 +71,23 @@ const unites = [
   { value: 'cc', label: 'Cuillère à café' },
   { value: 'pincee', label: 'Pincée' },
   { value: 'unite', label: 'Unité' },
-] as const
+] as const;
 
 const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
   value: String((i + 1) * 5),
   label: `${(i + 1) * 5} min`,
-}))
+}));
 
 interface EditRecipeProps {
-  recipe: {
-    id: number
-    title: string
-    cookTime: string
-    ingredients: Array<{
-      id: string
-      name: string
-      quantity: number
-      unit: string
-    }>
-  }
-  onRecipeEdit: (id: number, updatedRecipe: object) => void
+  recipe: RecipeModel,
+  onRecipeEdit: (id: string, updatedRecipe: RecipeModel) => void
 }
 
 export default function EditRecipeComponent({
-  recipe,
-  onRecipeEdit,
-}: EditRecipeProps) {
-  const [open, setOpen] = useState(false)
+                                              recipe,
+                                              onRecipeEdit,
+                                            }: EditRecipeProps) {
+  const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -105,7 +96,7 @@ export default function EditRecipeComponent({
       preparationTime: recipe.cookTime.split(' ')[0], // Extrait le nombre de minutes
       ingredients: recipe.ingredients,
     },
-  })
+  });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const updatedRecipe = {
@@ -115,32 +106,32 @@ export default function EditRecipeComponent({
       author: 'Utilisateur', // À remplacer par l'utilisateur connecté
       imageUrl: 'https://via.placeholder.com/150',
       ingredients: values.ingredients,
-    }
+    };
 
-    onRecipeEdit(recipe.id, updatedRecipe)
-    setOpen(false)
-  }
+    onRecipeEdit(recipe.id, updatedRecipe);
+    setOpen(false);
+  };
 
   const addIngredient = () => {
-    const currentIngredients = form.getValues('ingredients')
+    const currentIngredients = form.getValues('ingredients');
     form.setValue('ingredients', [
       ...currentIngredients,
       {
-        id: Math.random().toString(36).substr(2, 9),
+        ingredientId: Math.random().toString(36).substr(2, 9),
         name: '',
         quantity: 0,
         unit: '',
       },
-    ])
-  }
+    ]);
+  };
 
   const removeIngredient = (indexToRemove: number) => {
-    const currentIngredients = form.getValues('ingredients')
+    const currentIngredients = form.getValues('ingredients');
     form.setValue(
       'ingredients',
-      currentIngredients.filter((_, index) => index !== indexToRemove)
-    )
-  }
+      currentIngredients.filter((_, index) => index !== indexToRemove),
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -168,7 +159,7 @@ export default function EditRecipeComponent({
                   <FormControl>
                     <Input placeholder="Ex: Tarte aux pommes" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -185,7 +176,7 @@ export default function EditRecipeComponent({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Sélectionner le temps de préparation" />
+                        <SelectValue placeholder="Sélectionner le temps de préparation"/>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -196,7 +187,7 @@ export default function EditRecipeComponent({
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -224,7 +215,7 @@ export default function EditRecipeComponent({
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Ingrédient" />
+                                <SelectValue placeholder="Ingrédient"/>
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -238,7 +229,7 @@ export default function EditRecipeComponent({
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -257,7 +248,7 @@ export default function EditRecipeComponent({
                               }
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -274,7 +265,7 @@ export default function EditRecipeComponent({
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Unité" />
+                                <SelectValue placeholder="Unité"/>
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -288,7 +279,7 @@ export default function EditRecipeComponent({
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -300,7 +291,7 @@ export default function EditRecipeComponent({
                       className="mt-4"
                       onClick={() => removeIngredient(index)}
                     >
-                      <Trash2 className="size-4 text-red-500" />
+                      <Trash2 className="size-4 text-red-500"/>
                     </Button>
                   </div>
                 ))}
@@ -314,5 +305,5 @@ export default function EditRecipeComponent({
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

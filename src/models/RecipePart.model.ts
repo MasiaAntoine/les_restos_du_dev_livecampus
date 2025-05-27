@@ -1,5 +1,6 @@
 export interface RecipePartModel {
   ingredientId: string;
-  qtt: number;
+  name: string;
+  quantity: number;
   unit: string;
 }

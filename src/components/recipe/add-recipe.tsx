@@ -32,10 +32,13 @@ import { Input } from '@/components/ui/input';
 import { Trash2 } from 'lucide-react';
 import type { IngredientModel } from '@/models/Ingredient.model.ts';
 import { ServicesContext } from '@/contexts/contexts.tsx';
+import type { RecipeModel } from '@/models/Recipe.model.ts';
+import type { RecipePartModel } from '@/models/RecipePart.model.ts';
+import { uuidv4 } from 'zod/v4';
 
 // Schéma pour un ingrédient
 const ingredientSchema = z.object({
-  id: z.string(),
+  ingredientsId: z.string(),
   name: z.string().min(1, { message: 'Le nom de l\'ingrédient est requis' }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
   unit: z.string().min(1, { message: 'L\'unité est requise' }),
@@ -70,15 +73,13 @@ const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
   label: `${(i + 1) * 5} min`,
 }));
 
-export default function AddRecipeComponent({
-                                             onRecipeAdd,
-                                           }: {
-  onRecipeAdd: (recipe: object) => void
+export default function AddRecipeComponent({ onRecipeAdd }: {
+  onRecipeAdd: (recipe: RecipeModel) => void
 }) {
   const services = useContext(ServicesContext);
   const ingredientService = services?.ingredientsService;
-  const userInfo = services?.currentUser;
-  const [ingredients, setIngredients] = useState<IngredientModel[] | []>([]);
+  const currentUser = services?.currentUser;
+  const [availableIngredients, setAvailableIngredients] = useState<IngredientModel[] | []>([]);
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -92,25 +93,34 @@ export default function AddRecipeComponent({
   useEffect(() => {
     if (services && ingredientService) {
       ingredientService.getAllIngredients()
-        .then((x: IngredientModel[]) => setIngredients(x));
+        .then((ingredients: IngredientModel[]) => setAvailableIngredients(ingredients));
     }
   }, [services, ingredientService]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    if (ingredients.length === 0) {
+    if (availableIngredients.length === 0) {
       return;
     }
-    console.log(userInfo);
-    // const newRecipe: RecipeModel = {
-    //   id: '',
-    //   title: values.name,
-    //   cookTime: `${values.preparationTime} minutes`,
-    //   author: 'Utilisateur', // L'uid de l'utilisateur
-    //   imageUrl: 'https://via.placeholder.com/150', // Image par défaut
-    //   ingredients: ingredients,
-    // };
-
-    // onRecipeAdd(newRecipe);
+    const recipeId: string | null = uuidv4().format;
+    if (recipeId === null) {
+      throw new Error('Error generating recipe ID');
+    }
+    // map values to recipeModel
+    const ingredients: RecipePartModel[] = values.ingredients.map((ingredient) => ({
+      ingredientId: ingredient.ingredientsId,
+      name: ingredient.name,
+      quantity: ingredient.quantity,
+      unit: ingredient.unit,
+    }));
+    const newRecipe: RecipeModel = {
+      id: recipeId,
+      title: values.name,
+      cookTime: `${values.preparationTime} minutes`,
+      author: currentUser!.uid,
+      imageUrl: 'https://via.placeholder.com/150',
+      ingredients: ingredients,
+    };
+    onRecipeAdd(newRecipe);
     setOpen(false);
     form.reset();
   };
@@ -120,9 +130,8 @@ export default function AddRecipeComponent({
     form.setValue('ingredients', [
       ...currentIngredients,
       {
-        id: Math.random().toString(36).substr(2, 9),
+        ingredientsId: Math.random().toString(36).substr(2, 9),
         name: '',
-        type: '',
         quantity: 0,
         unit: '',
       },
@@ -222,7 +231,7 @@ export default function AddRecipeComponent({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {ingredients.map((ingredient) => (
+                              {availableIngredients.map((ingredient) => (
                                 <SelectItem
                                   key={ingredient.name}
                                   value={ingredient.name}
