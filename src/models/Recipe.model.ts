@@ -1,10 +1,10 @@
-import type { IngredientModel } from './Ingredient.model';
+import type { RecipePartModel } from '@/models/RecipePart.model.ts';
 
 export interface RecipeModel {
-  id: number
-  title: string
-  cookTime: string
-  author: string
-  imageUrl: string
-  ingredients: IngredientModel[]
+  id: string;
+  title: string;
+  cookTime: string;
+  author: string;
+  imageUrl: string;
+  ingredients: RecipePartModel[];
 }

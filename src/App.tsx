@@ -4,14 +4,23 @@ import { FirebaseService } from '@/services/firebase/firebase.service.tsx';
 import { ServicesContext } from './contexts/contexts.tsx';
 import { AuthService } from '@/services/firebase/auth.service.tsx';
 import { UserService } from '@/services/firebase/user.service.tsx';
+import { IngredientsService } from '@/services/firebase/ingredients.service.ts';
+import { RecipesService } from '@/services/firebase/recipes.service.ts';
 
 function App() {
   const firebaseService: FirebaseService = useMemo(() => new FirebaseService(), []);
   const authService: AuthService = useMemo(() => new AuthService(firebaseService), [firebaseService]);
   const userService: UserService = useMemo(() => new UserService(firebaseService), [firebaseService]);
+  const ingredientsService = useMemo(() => new IngredientsService(firebaseService), [firebaseService]);
+  const recipesService = useMemo(() => new RecipesService(firebaseService), [firebaseService]);
 
   return (
-    <ServicesContext.Provider value={{ authService: authService, userService: userService }}>
+    <ServicesContext.Provider value={{
+      authService: authService,
+      userService: userService,
+      ingredientsService: ingredientsService,
+      recipesService: recipesService,
+    }}>
       <Router/>
     </ServicesContext.Provider>
   );

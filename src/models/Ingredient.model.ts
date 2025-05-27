@@ -1,8 +1,4 @@
-import type { UnitModel } from './UnitModel.model';
-
 export interface IngredientModel {
-  id: string
-  name: string
-  quantity: number
-  unit: UnitModel[]
+  id: string;
+  name: string;
 }
