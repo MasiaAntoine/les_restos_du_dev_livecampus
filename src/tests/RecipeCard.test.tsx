@@ -89,8 +89,7 @@ describe('RecipeCard Component', () => {
       expect(handleDelete).toHaveBeenCalledWith(recipe.id)
     })
 
-    test('affiche un message dans la console quand Modifier est cliqué', () => {
-      const consoleSpy = vi.spyOn(console, 'log')
+    test("ouvre la boîte de dialogue d'édition quand le bouton Modifier est cliqué", () => {
       render(<RecipeCard {...recipe} showDetailsButton={true} />)
 
       const moreButton = screen.getByTestId('recipe-more-button')
@@ -99,13 +98,9 @@ describe('RecipeCard Component', () => {
       const editButton = screen.getByTestId('recipe-edit-button')
       fireEvent.click(editButton)
 
-      expect(consoleSpy).toHaveBeenCalledWith('Modifier la recette:', {
-        title: recipe.title,
-        author: recipe.author,
-        cookTime: recipe.cookTime,
-      })
-
-      consoleSpy.mockRestore()
+      // Vérifie que la boîte de dialogue est ouverte
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByText('Modifier la recette')).toBeInTheDocument()
     })
   })
 
