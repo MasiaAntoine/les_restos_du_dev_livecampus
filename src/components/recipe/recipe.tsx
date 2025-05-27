@@ -25,7 +25,14 @@ export default function RecipeComponent() {
       setIsLoading(true)
       recipesService
         .getRecipesByAuthor(currentUser.displayName)
-        .then((recipes: RecipeModel[]) => setRecipesList(recipes))
+        .then((recipes: RecipeModel[]) => {
+          setRecipesList(recipes)
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          console.error('Erreur lors du chargement des recettes:', error)
+          setIsLoading(false)
+        })
     }
   }, [services, recipesService, currentUser])
 
@@ -69,15 +76,28 @@ export default function RecipeComponent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {recipesList.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onDelete={handleDeleteRecipe}
-                onEdit={handleEditRecipe}
-                showDetailsButton={true}
-              />
-            ))}
+            {isLoading
+              ? Array(4)
+                  .fill(null)
+                  .map((_, index) => (
+                    <RecipeCard
+                      key={`loading-${index}`}
+                      recipe={{} as RecipeModel}
+                      onDelete={() => {}}
+                      onEdit={() => {}}
+                      isLoading={true}
+                    />
+                  ))
+              : recipesList.map((recipe) => (
+                  <RecipeCard
+                    key={recipe.id}
+                    recipe={recipe}
+                    onDelete={handleDeleteRecipe}
+                    onEdit={handleEditRecipe}
+                    showDetailsButton={true}
+                    isLoading={false}
+                  />
+                ))}
           </div>
         </CardContent>
         <CardFooter className="flex justify-center">
