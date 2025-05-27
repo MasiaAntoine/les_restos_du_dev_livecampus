@@ -7,6 +7,8 @@ import { Link, type NavigateFunction, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import logo from '@/assets/logo.png'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
+import { useContext, useState } from 'react'
 
 import {
   Form,
@@ -16,7 +18,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { useContext } from 'react'
 import { Input } from '@/components/ui/input'
 import { ServicesContext, type Services } from '@/contexts/contexts.tsx'
 import type { AuthService } from '@/services/firebase/auth.service.tsx'
@@ -38,6 +39,7 @@ export default function LoginPage() {
   const userService: UserService | undefined = services?.userService
   const recipesService: RecipesService | undefined = services?.recipesService
   const navigate: NavigateFunction = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,7 +112,24 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 p-3"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

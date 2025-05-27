@@ -7,6 +7,7 @@ import { Link, type NavigateFunction, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import logo from '@/assets/logo.png'
 import { toast } from 'sonner'
+import { Eye, EyeOff } from 'lucide-react'
 
 import {
   Form,
@@ -17,7 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { ServicesContext, type Services } from '@/contexts/contexts.tsx'
 import type { AuthService } from '@/services/firebase/auth.service.tsx'
 import type { UserService } from '@/services/firebase/user.service.tsx'
@@ -55,6 +56,9 @@ export default function RegisterPage() {
       confirmPassword: '',
     },
   })
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!authService || !userService) {
@@ -141,7 +145,24 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 p-3"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -155,7 +176,26 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Confirmer le mot de passe</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="••••••••"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-0 top-1/2 -translate-y-1/2 p-3"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
