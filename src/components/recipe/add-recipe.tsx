@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -15,11 +15,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Button } from '../ui/button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+} from '@/components/ui/dialog';
+import { Button } from '../ui/button';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -27,17 +27,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Trash2 } from 'lucide-react'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Trash2 } from 'lucide-react';
+import type { IngredientModel } from '@/models/Ingredient.model.ts';
+import { ServicesContext } from '@/contexts/contexts.tsx';
 
 // Schéma pour un ingrédient
 const ingredientSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
+  name: z.string().min(1, { message: 'Le nom de l\'ingrédient est requis' }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
-  unit: z.string().min(1, { message: "L'unité est requise" }),
-})
+  unit: z.string().min(1, { message: 'L\'unité est requise' }),
+});
 
 // Schéma du formulaire
 const formSchema = z.object({
@@ -50,16 +52,7 @@ const formSchema = z.object({
   ingredients: z.array(ingredientSchema).min(1, {
     message: 'Ajoutez au moins un ingrédient',
   }),
-})
-
-const ingredients = [
-  { name: 'Farine' },
-  { name: 'Sucre' },
-  { name: 'Œufs' },
-  { name: 'Lait' },
-  { name: 'Beurre' },
-  { name: 'Sel' },
-] as const
+});
 
 const unites = [
   { value: 'g', label: 'Grammes' },
@@ -70,19 +63,23 @@ const unites = [
   { value: 'cc', label: 'Cuillère à café' },
   { value: 'pincee', label: 'Pincée' },
   { value: 'unite', label: 'Unité' },
-] as const
+] as const;
 
 const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
   value: String((i + 1) * 5),
   label: `${(i + 1) * 5} min`,
-}))
+}));
 
 export default function AddRecipeComponent({
-  onRecipeAdd,
-}: {
+                                             onRecipeAdd,
+                                           }: {
   onRecipeAdd: (recipe: object) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const services = useContext(ServicesContext);
+  const ingredientService = services?.ingredientsService;
+  const userInfo = services?.currentUser;
+  const [ingredients, setIngredients] = useState<IngredientModel[] | []>([]);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -90,25 +87,36 @@ export default function AddRecipeComponent({
       name: '',
       ingredients: [],
     },
-  })
+  });
+
+  useEffect(() => {
+    if (services && ingredientService) {
+      ingredientService.getAllIngredients()
+        .then((x: IngredientModel[]) => setIngredients(x));
+    }
+  }, [services, ingredientService]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const newRecipe = {
-      id: Math.floor(Math.random() * 1000), // Pas besoin d'id firebase le genere tout seul
-      title: values.name,
-      cookTime: `${values.preparationTime} minutes`,
-      author: 'Utilisateur', // L'uid de l'utilisateur
-      imageUrl: 'https://via.placeholder.com/150', // Image par défaut
-      ingredients: values.ingredients,
+    if (ingredients.length === 0) {
+      return;
     }
+    console.log(userInfo);
+    // const newRecipe: RecipeModel = {
+    //   id: '',
+    //   title: values.name,
+    //   cookTime: `${values.preparationTime} minutes`,
+    //   author: 'Utilisateur', // L'uid de l'utilisateur
+    //   imageUrl: 'https://via.placeholder.com/150', // Image par défaut
+    //   ingredients: ingredients,
+    // };
 
-    onRecipeAdd(newRecipe)
-    setOpen(false)
-    form.reset()
-  }
+    // onRecipeAdd(newRecipe);
+    setOpen(false);
+    form.reset();
+  };
 
   const addIngredient = () => {
-    const currentIngredients = form.getValues('ingredients')
+    const currentIngredients = form.getValues('ingredients');
     form.setValue('ingredients', [
       ...currentIngredients,
       {
@@ -118,16 +126,16 @@ export default function AddRecipeComponent({
         quantity: 0,
         unit: '',
       },
-    ])
-  }
+    ]);
+  };
 
   const removeIngredient = (indexToRemove: number) => {
-    const currentIngredients = form.getValues('ingredients')
+    const currentIngredients = form.getValues('ingredients');
     form.setValue(
       'ingredients',
-      currentIngredients.filter((_, index) => index !== indexToRemove)
-    )
-  }
+      currentIngredients.filter((_, index) => index !== indexToRemove),
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -153,7 +161,7 @@ export default function AddRecipeComponent({
                   <FormControl>
                     <Input placeholder="Ex: Tarte aux pommes" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -170,7 +178,7 @@ export default function AddRecipeComponent({
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Sélectionner le temps de préparation" />
+                        <SelectValue placeholder="Sélectionner le temps de préparation"/>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -181,7 +189,7 @@ export default function AddRecipeComponent({
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               )}
             />
@@ -210,7 +218,7 @@ export default function AddRecipeComponent({
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Ingrédient" />
+                                <SelectValue placeholder="Ingrédient"/>
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -224,7 +232,7 @@ export default function AddRecipeComponent({
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -243,7 +251,7 @@ export default function AddRecipeComponent({
                               }
                             />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -260,7 +268,7 @@ export default function AddRecipeComponent({
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Unité" />
+                                <SelectValue placeholder="Unité"/>
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -274,7 +282,7 @@ export default function AddRecipeComponent({
                               ))}
                             </SelectContent>
                           </Select>
-                          <FormMessage />
+                          <FormMessage/>
                         </FormItem>
                       )}
                     />
@@ -286,7 +294,7 @@ export default function AddRecipeComponent({
                       className="mt-4"
                       onClick={() => removeIngredient(index)}
                     >
-                      <Trash2 className="size-4 text-red-500" />
+                      <Trash2 className="size-4 text-red-500"/>
                     </Button>
                   </div>
                 ))}
@@ -300,5 +308,5 @@ export default function AddRecipeComponent({
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

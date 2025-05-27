@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Link } from 'react-router-dom';
+import { Link, type NavigateFunction, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import logo from '@/assets/logo.png';
 
@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/form';
 import { useContext } from 'react';
 import { Input } from '@/components/ui/input';
-import type { UserCredential } from 'firebase/auth';
 import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
 import type { UserService } from '@/services/firebase/user.service';
@@ -37,6 +36,7 @@ export default function LoginPage() {
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
   const recipesService: RecipesService | undefined = services?.recipesService;
+  const navigate: NavigateFunction = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,9 +52,8 @@ export default function LoginPage() {
     }
     try {
       console.log(await recipesService?.getAllRecipes());
-      const userCred: UserCredential = await authService.signIn(values.email, values.password);
-
-      await userService.getUserByUid(userCred.user.uid);
+      await authService.signIn(values.email, values.password);
+      navigate('/profile');
     } catch (error) {
       console.log(error);
     }
@@ -133,5 +132,5 @@ export default function LoginPage() {
         </Form>
       </div>
     </div>
-  )
+  );
 }

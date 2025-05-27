@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Router from './router';
 import { FirebaseService } from '@/services/firebase/firebase.service.tsx';
 import { ServicesContext } from './contexts/contexts.tsx';
@@ -6,10 +6,12 @@ import { AuthService } from '@/services/firebase/auth.service.tsx';
 import { UserService } from '@/services/firebase/user.service.tsx';
 import { IngredientsService } from '@/services/firebase/ingredients.service.ts';
 import { RecipesService } from '@/services/firebase/recipes.service.ts';
+import type { UserInfo } from 'firebase/auth';
 
 function App() {
+  const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
   const firebaseService: FirebaseService = useMemo(() => new FirebaseService(), []);
-  const authService: AuthService = useMemo(() => new AuthService(firebaseService), [firebaseService]);
+  const authService: AuthService = useMemo(() => new AuthService(firebaseService, setCurrentUser), [firebaseService]);
   const userService: UserService = useMemo(() => new UserService(firebaseService), [firebaseService]);
   const ingredientsService = useMemo(() => new IngredientsService(firebaseService), [firebaseService]);
   const recipesService = useMemo(() => new RecipesService(firebaseService), [firebaseService]);
@@ -20,6 +22,7 @@ function App() {
       userService: userService,
       ingredientsService: ingredientsService,
       recipesService: recipesService,
+      currentUser: currentUser,
     }}>
       <Router/>
     </ServicesContext.Provider>
