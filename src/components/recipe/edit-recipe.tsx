@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -31,6 +31,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Trash2 } from 'lucide-react';
 import type { RecipeModel } from '@/models/Recipe.model.ts';
+import { ServicesContext } from '@/contexts/contexts.tsx';
+import type { IngredientModel } from '@/models/Ingredient.model.ts';
+import { v4 as uuid } from 'uuid';
+import type { RecipePartModel } from '@/models/RecipePart.model.ts';
 
 // Schéma pour un ingrédient (même que dans add-recipe)
 const ingredientSchema = z.object({
@@ -53,15 +57,6 @@ const formSchema = z.object({
   }),
 });
 
-const ingredients = [
-  { name: 'Farine' },
-  { name: 'Sucre' },
-  { name: 'Œufs' },
-  { name: 'Lait' },
-  { name: 'Beurre' },
-  { name: 'Sel' },
-] as const;
-
 const unites = [
   { value: 'g', label: 'Grammes' },
   { value: 'kg', label: 'Kilogrammes' },
@@ -80,15 +75,16 @@ const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
 
 interface EditRecipeProps {
   recipe: RecipeModel,
-  onRecipeEdit: (id: string, updatedRecipe: RecipeModel) => void
+  onRecipeEdit: (updatedRecipe: RecipeModel) => void
 }
 
-export default function EditRecipeComponent({
-                                              recipe,
-                                              onRecipeEdit,
-                                            }: EditRecipeProps) {
+export default function EditRecipeComponent(
+  { recipe, onRecipeEdit }: EditRecipeProps) {
+  const services = useContext(ServicesContext);
+  const ingredientService = services?.ingredientsService;
+  const currentUser = services?.currentUser;
+  const [availableIngredients, setAvailableIngredients] = useState<IngredientModel[] | []>([]);
   const [open, setOpen] = useState(false);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -98,18 +94,38 @@ export default function EditRecipeComponent({
     },
   });
 
+  useEffect(() => {
+    if (services && ingredientService) {
+      ingredientService.getAllIngredients()
+        .then((ingredients: IngredientModel[]) => setAvailableIngredients(ingredients));
+    }
+  }, [services, ingredientService]);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const updatedRecipe = {
-      id: recipe.id,
+    if (availableIngredients.length === 0) {
+      return;
+    }
+    const recipeId: string = uuid();
+    if (recipeId === null) {
+      throw new Error('Error generating recipe ID');
+    }
+    const ingredients: RecipePartModel[] = values.ingredients.map((ingredient) => ({
+      ingredientId: ingredient.ingredientId,
+      name: ingredient.name,
+      quantity: ingredient.quantity,
+      unit: ingredient.unit,
+    }));
+    const newRecipe: RecipeModel = {
+      id: recipeId,
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
-      author: 'Utilisateur', // À remplacer par l'utilisateur connecté
+      author: currentUser!.displayName || 'Anonyme',
       imageUrl: 'https://via.placeholder.com/150',
-      ingredients: values.ingredients,
+      ingredients: ingredients,
     };
-
-    onRecipeEdit(recipe.id, updatedRecipe);
+    onRecipeEdit(newRecipe);
     setOpen(false);
+    form.reset();
   };
 
   const addIngredient = () => {
@@ -219,7 +235,7 @@ export default function EditRecipeComponent({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {ingredients.map((ingredient) => (
+                              {availableIngredients.map((ingredient) => (
                                 <SelectItem
                                   key={ingredient.name}
                                   value={ingredient.name}

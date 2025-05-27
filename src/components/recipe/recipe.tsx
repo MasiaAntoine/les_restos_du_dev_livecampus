@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import RecipeCard from './card-recipe';
 import AddRecipe from './add-recipe';
 
@@ -13,98 +13,20 @@ import {
 import { ServicesContext } from '@/contexts/contexts.tsx';
 import type { RecipeModel } from '@/models/Recipe.model.ts';
 
-const recipes = [
-  {
-    id: '1',
-    title: 'Recette 1',
-    author: 'John Doe',
-    cookTime: '10 minutes',
-    imageUrl: 'https://via.placeholder.com/150',
-    ingredients: [
-      {
-        ingredientId: '1a',
-        name: 'Farine',
-        quantity: 250,
-        unit: 'g',
-      },
-      {
-        ingredientId: '1b',
-        name: 'Œufs',
-        quantity: 2,
-        unit: 'unite',
-      },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Recette 2',
-    author: 'Jane Smith',
-    cookTime: '15 minutes',
-    imageUrl: 'https://via.placeholder.com/150',
-    ingredients: [
-      {
-        ingredientId: '2a',
-        name: 'Lait',
-        quantity: 500,
-        unit: 'ml',
-      },
-      {
-        ingredientId: '2b',
-        name: 'Sucre',
-        quantity: 100,
-        unit: 'g',
-      },
-    ],
-  },
-  {
-    id: '3',
-    title: 'Recette 3',
-    author: 'Alice Johnson',
-    cookTime: '20 minutes',
-    imageUrl: 'https://via.placeholder.com/150',
-    ingredients: [
-      {
-        ingredientId: '3a',
-        name: 'Beurre',
-        quantity: 125,
-        unit: 'g',
-      },
-      {
-        ingredientId: '3b',
-        name: 'Sel',
-        quantity: 1,
-        unit: 'pincee',
-      },
-    ],
-  },
-  {
-    id: '4',
-    title: 'Recette 4',
-    author: 'Bob Wilson',
-    cookTime: '25 minutes',
-    imageUrl: 'https://via.placeholder.com/150',
-    ingredients: [
-      {
-        ingredientId: '4a',
-        name: 'Farine',
-        quantity: 300,
-        unit: 'g',
-      },
-      {
-        ingredientId: '4b',
-        name: 'Lait',
-        quantity: 250,
-        unit: 'ml',
-      },
-    ],
-  },
-];
-
 export default function RecipeComponent() {
-  const [recipesList, setRecipesList] = useState<RecipeModel[]>(recipes);
+  const [recipesList, setRecipesList] = useState<RecipeModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const services = useContext(ServicesContext);
+  const currentUser = services?.currentUser;
   const recipesService = services?.recipesService;
+
+  useEffect(() => {
+    if (services && recipesService && currentUser && currentUser.displayName) {
+      setIsLoading(true);
+      recipesService.getRecipesByAuthor(currentUser.displayName)
+        .then((recipes: RecipeModel[]) => setRecipesList(recipes));
+    }
+  }, [services, recipesService, currentUser]);
 
   const handleDeleteRecipe = (id: string) => {
     setRecipesList(recipesList.filter((recipe) => recipe.id !== id));

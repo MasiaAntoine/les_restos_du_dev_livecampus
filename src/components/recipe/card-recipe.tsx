@@ -15,7 +15,7 @@ interface RecipeCardProps {
   recipe: RecipeModel;
   showDetailsButton?: boolean;
   onDelete: (id: string) => void;
-  onEdit: (id: string, updatedRecipe: RecipeModel) => void;
+  onEdit: (updatedRecipe: RecipeModel) => void;
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
