@@ -50,6 +50,11 @@ export default function RecipeComponent() {
     console.log("appeler l'API pour supprimer la recette avec l'ID:", id)
   }
 
+  const handleAddRecipe = (newRecipe: object) => {
+    setRecipesList([...recipesList, newRecipe])
+    console.log('Nouvelle recette ajoutée:', newRecipe)
+  }
+
   return (
     <>
       <Card className="w-full">
@@ -59,7 +64,7 @@ export default function RecipeComponent() {
         </CardHeader>
         <CardContent>
           <div className="mb-6">
-            <AddRecipe />
+            <AddRecipe onRecipeAdd={handleAddRecipe} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -76,7 +77,13 @@ const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
   label: `${(i + 1) * 5} min`,
 }))
 
-export default function AddRecipeComponent() {
+export default function AddRecipeComponent({
+  onRecipeAdd,
+}: {
+  onRecipeAdd: (recipe: object) => void
+}) {
+  const [open, setOpen] = useState(false)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,7 +93,18 @@ export default function AddRecipeComponent() {
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log('Formulaire soumis:', values)
+    const newRecipe = {
+      id: Math.floor(Math.random() * 1000), // Génération d'un ID temporaire
+      title: values.name,
+      cookTime: `${values.preparationTime} minutes`,
+      author: 'Utilisateur', // À remplacer par l'utilisateur connecté
+      imageUrl: 'https://via.placeholder.com/150', // Image par défaut
+      ingredients: values.ingredients,
+    }
+
+    onRecipeAdd(newRecipe)
+    setOpen(false)
+    form.reset()
   }
 
   const addIngredient = () => {
@@ -112,7 +130,7 @@ export default function AddRecipeComponent() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="mb-4">Créer une recette</Button>
       </DialogTrigger>
