@@ -33,7 +33,7 @@ export default function ProfileComponent() {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="w-full">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
           <Avatar className="h-24 w-24">
@@ -84,8 +84,8 @@ export default function ProfileComponent() {
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-col space-y-4">
-        <Button variant="destructive" className="w-full" onClick={handleLogout}>
+      <CardFooter className="flex justify-end">
+        <Button variant="destructive" onClick={handleLogout}>
           Se déconnecter
         </Button>
       </CardFooter>
