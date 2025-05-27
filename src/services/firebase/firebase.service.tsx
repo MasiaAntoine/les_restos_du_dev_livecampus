@@ -14,6 +14,10 @@ import {
   type WhereFilterOp,
   type OrderByDirection,
   type Query,
+  DocumentSnapshot,
+  DocumentReference,
+  CollectionReference,
+  QuerySnapshot,
 } from 'firebase/firestore';
 import { getAuth, type Auth } from 'firebase/auth';
 import { firebaseConfig } from '/firebase.config';
@@ -27,7 +31,6 @@ type Order<T> = {
   fieldName: keyof T,
   direction: OrderByDirection
 }
-
 
 export class FirebaseService {
   readonly #firebaseApp: FirebaseApp;
@@ -53,35 +56,35 @@ export class FirebaseService {
   }
 
   public async getDocument<T extends DocumentData = DocumentData>(path: string): Promise<T | undefined> {
-    const docSnapshot = await getDoc(doc(getFirestore(), path));
+    const docSnapshot: DocumentSnapshot = await getDoc(doc(getFirestore(), path));
     return docSnapshot.data() as T;
   }
 
   public async setDocument<T extends DocumentData = DocumentData>(path: string, data: T): Promise<void> {
-    const docRef = doc(this.getFs(), path);
+    const docRef: DocumentReference = doc(this.getFs(), path);
     return setDoc(docRef, data);
   }
 
   public async deleteDocument(path: string): Promise<void> {
-    const docRef = doc(this.getFs(), path);
+    const docRef: DocumentReference = doc(this.getFs(), path);
     return setDoc(docRef, {}, { merge: true });
   }
 
   public async getAllDocuments<T>(collectionName: string): Promise<T[]> {
-    const c = collection(getFirestore(), collectionName);
-    const querySnapshot = await getDocs(c);
+    const c: CollectionReference = collection(getFirestore(), collectionName);
+    const querySnapshot: QuerySnapshot = await getDocs(c);
     return querySnapshot.docs.map(d => d.data() as T);
   }
 
   public async getDocumentsWhere<T>(collectionName: string, queryWhere: QueryWhereElement<T>[] = [], order?: keyof T | Order<T>): Promise<T[]> {
-    const c = collection(getFirestore(), collectionName);
-    const q = this.constructQuery(c, queryWhere, order);
-    const querySnapshot = await getDocs(q);
+    const c: CollectionReference = collection(getFirestore(), collectionName);
+    const q: Query = this.constructQuery(c, queryWhere, order);
+    const querySnapshot: QuerySnapshot = await getDocs(q);
     return querySnapshot.docs.map(d => d.data() as T);
   }
 
   public constructQuery<T>(originalQuery: Query, queryWhere: QueryWhereElement<T>[] = [], order?: keyof T | Order<T>): Query {
-    let q = originalQuery;
+    let q: Query = originalQuery;
     for (const whereOption of queryWhere) {
       q = query(q, where(whereOption.fieldName as string, whereOption.operator, whereOption.value));
     }
