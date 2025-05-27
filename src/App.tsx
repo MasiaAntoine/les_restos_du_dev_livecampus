@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
 import Router from './router'
 import { FirebaseService } from '@/services/firebase/firebase.service.tsx'
 import { ServicesContext } from './contexts/contexts.tsx'
@@ -11,6 +12,8 @@ import { Toaster } from '@/components/ui/sonner'
 
 function App() {
   const [currentUser, setCurrentUser] = useState<UserModel | null>(null)
+  const [loading, setLoading] = useState(true)
+
   const firebaseService: FirebaseService = useMemo(
     () => new FirebaseService(),
     []
@@ -31,6 +34,27 @@ function App() {
     () => new RecipesService(firebaseService),
     [firebaseService]
   )
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(
+      firebaseService.getFireAuth(),
+      async (firebaseUser) => {
+        if (firebaseUser) {
+          const user = await userService.getUserByUid(firebaseUser.uid)
+          setCurrentUser(user)
+        } else {
+          setCurrentUser(null)
+        }
+        setLoading(false)
+      }
+    )
+
+    return () => unsubscribe()
+  }, [firebaseService, userService])
+
+  if (loading) {
+    return <div>Chargement...</div>
+  }
 
   return (
     <ServicesContext.Provider

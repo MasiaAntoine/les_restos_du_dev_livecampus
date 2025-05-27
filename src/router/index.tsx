@@ -4,15 +4,35 @@ import Register from '../pages/register'
 import Login from '../pages/login'
 import ForgotPassword from '../pages/forgot-password'
 import Profile from '../pages/profile-menu'
+import { ProtectedRoute } from './protected-route'
 
 export default function index() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* Routes accessibles uniquement aux utilisateurs non connectés */}
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute element={<Register />} requireAuth={false} />
+          }
+        />
+        <Route
+          path="/login"
+          element={<ProtectedRoute element={<Login />} requireAuth={false} />}
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <ProtectedRoute element={<ForgotPassword />} requireAuth={false} />
+          }
+        />
+
+        {/* Routes protégées nécessitant une authentification */}
+        <Route
+          path="/profile"
+          element={<ProtectedRoute element={<Profile />} />}
+        />
       </Routes>
     </BrowserRouter>
   )
