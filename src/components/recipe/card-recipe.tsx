@@ -10,19 +10,23 @@ import { Button } from '../ui/button'
 import { MoreVertical } from 'lucide-react'
 
 type RecipeCardProps = {
+  id: number
   title: string
   author: string
   cookTime: string
   imageUrl: string
   showDetailsButton?: boolean
+  onDelete?: (id: number) => void
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
+  id,
   title,
   author,
   cookTime,
   imageUrl,
   showDetailsButton = false,
+  onDelete,
 }) => {
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -31,7 +35,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault()
-    console.log('Supprimer la recette:', { title, author, cookTime })
+    if (onDelete) {
+      onDelete(id)
+    }
   }
 
   return (

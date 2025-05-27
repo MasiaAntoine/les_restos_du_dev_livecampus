@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import RecipeCard from './card-recipe'
 import AddRecipe from './add-recipe'
 
@@ -43,6 +43,13 @@ const recipes = [
 ]
 
 export default function RecipeComponent() {
+  const [recipesList, setRecipesList] = useState(recipes)
+
+  const handleDeleteRecipe = (id: number) => {
+    setRecipesList(recipesList.filter((recipe) => recipe.id !== id))
+    console.log("appeler l'API pour supprimer la recette avec l'ID:", id)
+  }
+
   return (
     <>
       <Card className="w-full">
@@ -56,14 +63,16 @@ export default function RecipeComponent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {recipes.map((recipe) => (
+            {recipesList.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
+                id={recipe.id}
                 title={recipe.title}
                 author={recipe.author}
                 cookTime={recipe.cookTime}
                 imageUrl={recipe.imageUrl}
                 showDetailsButton={true}
+                onDelete={handleDeleteRecipe}
               />
             ))}
           </div>
