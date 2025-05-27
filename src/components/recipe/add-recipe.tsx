@@ -43,6 +43,9 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Le nom de la recette doit contenir au moins 2 caractères.',
   }),
+  preparationTime: z.string().min(1, {
+    message: 'Le temps de préparation est requis',
+  }),
   ingredients: z.array(ingredientSchema).min(1, {
     message: 'Ajoutez au moins un ingrédient',
   }),
@@ -67,6 +70,11 @@ const unites = [
   { value: 'pincee', label: 'Pincée' },
   { value: 'unite', label: 'Unité' },
 ] as const
+
+const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
+  value: String((i + 1) * 5),
+  label: `${(i + 1) * 5} min`,
+}))
 
 export default function AddRecipeComponent() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -127,6 +135,34 @@ export default function AddRecipeComponent() {
                   <FormControl>
                     <Input placeholder="Ex: Tarte aux pommes" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="preparationTime"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Temps de préparation</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionner le temps de préparation" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {preparationTimes.map((time) => (
+                        <SelectItem key={time.value} value={time.value}>
+                          {time.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
