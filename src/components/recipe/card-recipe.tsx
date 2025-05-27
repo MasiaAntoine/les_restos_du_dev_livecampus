@@ -1,4 +1,5 @@
 import React from 'react'
+import EditRecipe from './edit-recipe'
 
 import {
   Popover,
@@ -9,14 +10,21 @@ import {
 import { Button } from '../ui/button'
 import { MoreVertical } from 'lucide-react'
 
-type RecipeCardProps = {
+interface RecipeCardProps {
   id: number
   title: string
   author: string
   cookTime: string
   imageUrl: string
+  ingredients: Array<{
+    id: string
+    name: string
+    quantity: number
+    unit: string
+  }>
   showDetailsButton?: boolean
-  onDelete?: (id: number) => void
+  onDelete: (id: number) => void
+  onEdit: (id: number, updatedRecipe: object) => void
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
@@ -25,14 +33,11 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   author,
   cookTime,
   imageUrl,
+  ingredients,
   showDetailsButton = false,
   onDelete,
+  onEdit,
 }) => {
-  const handleEdit = (e: React.MouseEvent) => {
-    e.preventDefault()
-    console.log('Modifier la recette:', { title, author, cookTime })
-  }
-
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault()
     if (onDelete) {
@@ -63,13 +68,15 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2 select-none">
                   <div className="space-y-2">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start"
-                      onClick={handleEdit}
-                    >
-                      Modifier
-                    </Button>
+                    <EditRecipe
+                      recipe={{
+                        id,
+                        title,
+                        cookTime,
+                        ingredients,
+                      }}
+                      onRecipeEdit={onEdit}
+                    />
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-red-500 hover:text-red-600"

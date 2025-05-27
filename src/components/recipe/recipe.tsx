@@ -18,6 +18,20 @@ const recipes = [
     author: 'John Doe',
     cookTime: '10 minutes',
     imageUrl: 'https://via.placeholder.com/150',
+    ingredients: [
+      {
+        id: '1a',
+        name: 'Farine',
+        quantity: 250,
+        unit: 'g',
+      },
+      {
+        id: '1b',
+        name: 'Œufs',
+        quantity: 2,
+        unit: 'unite',
+      },
+    ],
   },
   {
     id: 2,
@@ -25,6 +39,20 @@ const recipes = [
     author: 'Jane Smith',
     cookTime: '15 minutes',
     imageUrl: 'https://via.placeholder.com/150',
+    ingredients: [
+      {
+        id: '2a',
+        name: 'Lait',
+        quantity: 500,
+        unit: 'ml',
+      },
+      {
+        id: '2b',
+        name: 'Sucre',
+        quantity: 100,
+        unit: 'g',
+      },
+    ],
   },
   {
     id: 3,
@@ -32,6 +60,20 @@ const recipes = [
     author: 'Alice Johnson',
     cookTime: '20 minutes',
     imageUrl: 'https://via.placeholder.com/150',
+    ingredients: [
+      {
+        id: '3a',
+        name: 'Beurre',
+        quantity: 125,
+        unit: 'g',
+      },
+      {
+        id: '3b',
+        name: 'Sel',
+        quantity: 1,
+        unit: 'pincee',
+      },
+    ],
   },
   {
     id: 4,
@@ -39,6 +81,20 @@ const recipes = [
     author: 'Bob Wilson',
     cookTime: '25 minutes',
     imageUrl: 'https://via.placeholder.com/150',
+    ingredients: [
+      {
+        id: '4a',
+        name: 'Farine',
+        quantity: 300,
+        unit: 'g',
+      },
+      {
+        id: '4b',
+        name: 'Lait',
+        quantity: 250,
+        unit: 'ml',
+      },
+    ],
   },
 ]
 
@@ -52,7 +108,16 @@ export default function RecipeComponent() {
 
   const handleAddRecipe = (newRecipe: object) => {
     setRecipesList([...recipesList, newRecipe])
-    console.log('Nouvelle recette ajoutée:', newRecipe)
+    console.log("appeler l'API Nouvelle recette ajoutée:", newRecipe)
+  }
+
+  const handleEditRecipe = (id: number, updatedRecipe: object) => {
+    setRecipesList(
+      recipesList.map((recipe) =>
+        recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe
+      )
+    )
+    console.log("appeler l'API Recette mise à jour:", updatedRecipe)
   }
 
   return (
@@ -78,6 +143,8 @@ export default function RecipeComponent() {
                 imageUrl={recipe.imageUrl}
                 showDetailsButton={true}
                 onDelete={handleDeleteRecipe}
+                onEdit={handleEditRecipe}
+                ingredients={recipe.ingredients}
               />
             ))}
           </div>
