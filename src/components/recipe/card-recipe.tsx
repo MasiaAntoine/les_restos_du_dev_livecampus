@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/popover'
 
 import { Button } from '../ui/button'
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, Clock, User, Trash2 } from 'lucide-react'
 import type { RecipeModel } from '@/models/Recipe.model.ts'
 
 interface RecipeCardProps {
@@ -73,12 +73,17 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                 </PopoverTrigger>
                 <PopoverContent className="w-48 p-2 select-none">
                   <div className="space-y-2">
-                    <EditRecipe recipe={recipe} onRecipeEdit={onEdit} />
+                    <EditRecipe
+                      recipe={recipe}
+                      onRecipeEdit={onEdit}
+                      className="w-full justify-start flex items-center gap-2 hover:text-blue-600"
+                    />
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-red-500 hover:text-red-600"
+                      className="w-full justify-start text-red-500 hover:text-red-600 flex items-center gap-2"
                       onClick={handleDelete}
                     >
+                      <Trash2 className="h-4 w-4" />
                       Supprimer
                     </Button>
                   </div>
@@ -93,42 +98,18 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center space-x-2">
             <span className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+              <Clock className="h-4 w-4 mr-1" />
               {recipe.cookTime}
             </span>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              {recipe.author}
-            </span>
-          </div>
+          {!showDetailsButton && (
+            <div className="flex items-center space-x-2">
+              <span className="flex items-center">
+                <User className="h-4 w-4 mr-1" />
+                {recipe.author}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
