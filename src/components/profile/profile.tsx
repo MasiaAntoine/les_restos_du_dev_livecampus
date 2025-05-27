@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import { ServicesContext } from '@/contexts/contexts'
 import {
@@ -21,7 +22,14 @@ export default function ProfileComponent() {
   const currentUser = services?.currentUser
 
   const handleLogout = async () => {
-    navigate('/login')
+    try {
+      await services?.authService.signOut()
+      toast.success('Déconnexion réussie')
+      navigate('/login')
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+      toast.error('Erreur lors de la déconnexion')
+    }
   }
 
   return (
