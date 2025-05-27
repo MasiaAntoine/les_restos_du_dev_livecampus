@@ -131,7 +131,7 @@ export default function RecipeComponent() {
         recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe,
       ),
     );
-    console.log('appeler l\'API Recette mise à jour:', updatedRecipe);
+    console.log('appeler l\'API Recette mise à jour:', updatedRecipe, isLoading);
   };
 
   return (

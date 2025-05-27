@@ -34,7 +34,7 @@ import type { IngredientModel } from '@/models/Ingredient.model.ts';
 import { ServicesContext } from '@/contexts/contexts.tsx';
 import type { RecipeModel } from '@/models/Recipe.model.ts';
 import type { RecipePartModel } from '@/models/RecipePart.model.ts';
-import { uuidv4 } from 'zod/v4';
+import { v4 as uuid } from 'uuid';
 
 // Schéma pour un ingrédient
 const ingredientSchema = z.object({
@@ -101,11 +101,10 @@ export default function AddRecipeComponent({ onRecipeAdd }: {
     if (availableIngredients.length === 0) {
       return;
     }
-    const recipeId: string | null = uuidv4().format;
+    const recipeId: string = uuid();
     if (recipeId === null) {
       throw new Error('Error generating recipe ID');
     }
-    // map values to recipeModel
     const ingredients: RecipePartModel[] = values.ingredients.map((ingredient) => ({
       ingredientId: ingredient.ingredientsId,
       name: ingredient.name,
@@ -116,7 +115,7 @@ export default function AddRecipeComponent({ onRecipeAdd }: {
       id: recipeId,
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
-      author: currentUser!.uid,
+      author: currentUser!.displayName || 'Anonyme',
       imageUrl: 'https://via.placeholder.com/150',
       ingredients: ingredients,
     };

@@ -12,10 +12,11 @@ export class UserService {
     if (!uid) {
       return null;
     }
-
-    const userDoc = await this.#firebaseService.getDocument('USERS' + '/' + uid);
-    console.log(userDoc);
-    return;
+    const user = await this.#firebaseService.getDocument<UserModel>('USERS' + '/' + uid);
+    if(!user) {
+      return null;
+    }
+    return user;
   }
 
   public async createUser(user: UserModel) {

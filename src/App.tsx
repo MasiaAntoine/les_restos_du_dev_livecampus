@@ -6,13 +6,13 @@ import { AuthService } from '@/services/firebase/auth.service.tsx';
 import { UserService } from '@/services/firebase/user.service.tsx';
 import { IngredientsService } from '@/services/firebase/ingredients.service.ts';
 import { RecipesService } from '@/services/firebase/recipes.service.ts';
-import type { UserInfo } from 'firebase/auth';
+import type { UserModel } from '@/models/User.model.ts';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserModel | null>(null);
   const firebaseService: FirebaseService = useMemo(() => new FirebaseService(), []);
-  const authService: AuthService = useMemo(() => new AuthService(firebaseService, setCurrentUser), [firebaseService]);
   const userService: UserService = useMemo(() => new UserService(firebaseService), [firebaseService]);
+  const authService: AuthService = useMemo(() => new AuthService(firebaseService, setCurrentUser, userService), [firebaseService, userService]);
   const ingredientsService = useMemo(() => new IngredientsService(firebaseService), [firebaseService]);
   const recipesService = useMemo(() => new RecipesService(firebaseService), [firebaseService]);
 

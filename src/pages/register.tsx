@@ -19,9 +19,7 @@ import { Input } from '@/components/ui/input';
 import { useContext } from 'react';
 import { ServicesContext, type Services } from '@/contexts/contexts.tsx';
 import type { AuthService } from '@/services/firebase/auth.service.tsx';
-import type { UserCredential } from 'firebase/auth';
 import type { UserService } from '@/services/firebase/user.service.tsx';
-import type { UserModel } from '@/models/User.model.tsx';
 
 const formSchema = z
   .object({
@@ -45,7 +43,7 @@ export default function RegisterPage() {
   const services: Services | null = useContext(ServicesContext);
   const authService: AuthService | undefined = services?.authService;
   const userService: UserService | undefined = services?.userService;
-  const navigate:  NavigateFunction = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,19 +59,12 @@ export default function RegisterPage() {
     if (!authService || !userService) {
       return;
     }
+
     try {
-      const userCred: UserCredential = await authService.register(
-        values.email,
-        values.password,
-      );
-      if (userCred.user) {
-        const userData: UserModel = {
-          uid: userCred.user.uid,
-          displayName: values.username,
-          email: values.email,
-        }
-        await userService.createUser(userData).then(() => navigate('/profile'));
-      }
+      await authService.register(values.email, values.password, values.username)
+        .then((isSuccess) => {
+        return isSuccess ? navigate('/login') : console.error('Erreur lors de la création du compte');
+      });
     } catch (error) {
       console.error('Erreur lors de la création du compte:', error);
     }

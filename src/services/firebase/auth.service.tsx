@@ -1,30 +1,44 @@
-import {
-  type UserCredential,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword, type UserInfo,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
 import { FirebaseService } from './firebase.service.tsx';
+import type { UserService } from '@/services/firebase/user.service.tsx';
+import type { UserModel } from '@/models/User.model.ts';
 
 export class AuthService {
   #firebaseService: FirebaseService;
-  readonly #setcurrentUser: (user: UserInfo | null) => void;
+  #userService: UserService;
+  readonly #setcurrentUser: (user: UserModel | null) => void;
 
-  constructor(firebaseService: FirebaseService, setCurrentUser: (user: UserInfo | null) => void) {
+  constructor(firebaseService: FirebaseService, setCurrentUser: (user: UserModel | null) => void, userService: UserService) {
     this.#firebaseService = firebaseService;
+    this.#userService = userService;
     this.#setcurrentUser = setCurrentUser;
   }
 
-  public async signIn(email: string, password: string): Promise<UserCredential> {
+  public async signIn(email: string, password: string): Promise<boolean> {
     const userCredential: UserCredential = await signInWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
-    this.#setcurrentUser(userCredential.user);
-
-    return userCredential;
+    const user = await this.#userService.getUserByUid(userCredential.user.uid);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    this.#setcurrentUser(user);
+    return true;
   }
 
-  public async register(email: string, password: string): Promise<UserCredential> {
-    const userCredential: UserCredential = await createUserWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
-    this.#setcurrentUser(userCredential.user);
-
-    return userCredential;
+  public async register(email: string, password: string, displayName: string): Promise<boolean> {
+    try {
+      const userCredential: UserCredential = await createUserWithEmailAndPassword(this.#firebaseService.getFireAuth(), email, password);
+      const user: UserModel = {
+        uid: userCredential.user.uid,
+        email: email,
+        displayName: displayName,
+      };
+      return this.#userService.createUser(user).then(() => {
+        this.#setcurrentUser(user);
+        return true;
+      });
+    } catch (error) {
+      console.error('Error during registration:', error);
+      return false;
+    }
   }
 }
