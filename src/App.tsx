@@ -9,6 +9,7 @@ import { IngredientsService } from '@/services/firebase/ingredients.service.ts'
 import { RecipesService } from '@/services/firebase/recipes.service.ts'
 import type { UserModel } from '@/models/User.model.ts'
 import { Toaster } from '@/components/ui/sonner'
+import Loading from '@/components/loading/loading'
 
 function App() {
   const [currentUser, setCurrentUser] = useState<UserModel | null>(null)
@@ -53,7 +54,7 @@ function App() {
   }, [firebaseService, userService])
 
   if (loading) {
-    return <div>Chargement...</div>
+    return <Loading />
   }
 
   return (
