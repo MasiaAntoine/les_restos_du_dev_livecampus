@@ -53,7 +53,14 @@ export default function RecipeForm({
       preparationTime: '',
       ingredients: [],
     },
+    mode: 'onChange', // Ajout du mode onChange pour voir les erreurs en temps réel
   })
+
+  // Ajoutons un useEffect pour surveiller les changements
+  useEffect(() => {
+    console.log('Valeurs du formulaire mises à jour:', form.getValues())
+    console.log('Erreurs du formulaire:', form.formState.errors)
+  }, [form.watch()])
 
   useEffect(() => {
     if (services && ingredientService) {
@@ -88,7 +95,20 @@ export default function RecipeForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault() // Assurons-nous que le formulaire ne se soumet pas deux fois
+          console.log('Tentative de soumission du formulaire')
+          console.log('Erreurs actuelles:', form.formState.errors)
+          console.log('Valeurs actuelles:', form.getValues())
+
+          form.handleSubmit((values) => {
+            console.log('Validation réussie, valeurs:', values)
+            onSubmit(values)
+          })(e)
+        }}
+        className="space-y-6"
+      >
         {/* Champ Nom */}
         <FormField
           control={form.control}
@@ -111,7 +131,13 @@ export default function RecipeForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Temps de préparation</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  console.log('Temps de préparation sélectionné:', value)
+                  field.onChange(value)
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Sélectionner le temps de préparation" />

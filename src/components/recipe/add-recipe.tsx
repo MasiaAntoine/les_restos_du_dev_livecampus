@@ -12,7 +12,6 @@ import {
 import { Button } from '../ui/button'
 import { ServicesContext } from '@/contexts/contexts.tsx'
 import type { RecipeModel } from '@/models/Recipe.model.ts'
-import type { RecipePartModel } from '@/models/RecipePart.model.ts'
 import { v4 as uuid } from 'uuid'
 import RecipeForm, { FormData } from './recipe-form'
 
@@ -26,27 +25,23 @@ export default function AddRecipeComponent({
   const [open, setOpen] = useState(false)
 
   const handleSubmit = (values: FormData) => {
+    console.log('AddRecipe handleSubmit appelé avec:', values)
     const recipeId = uuid()
-    const ingredients: RecipePartModel[] = values.ingredients.map(
-      (ingredient) => ({
-        ingredientId: ingredient.ingredientId,
-        name: ingredient.name,
-        quantity: ingredient.quantity,
-        unit: ingredient.unit,
-      })
-    )
-
-    const newRecipe: RecipeModel = {
-      id: recipeId,
-      title: values.name,
-      cookTime: `${values.preparationTime} minutes`,
-      author: currentUser?.displayName || 'Anonyme',
-      imageUrl: 'https://via.placeholder.com/150',
-      ingredients: ingredients,
+    try {
+      const newRecipe: RecipeModel = {
+        id: recipeId,
+        title: values.name,
+        cookTime: `${values.preparationTime} minutes`,
+        author: currentUser?.displayName || 'Anonyme',
+        imageUrl: 'https://via.placeholder.com/150',
+        ingredients: values.ingredients,
+      }
+      console.log('Nouvelle recette créée:', newRecipe)
+      onRecipeAdd(newRecipe)
+      setOpen(false)
+    } catch (error) {
+      console.error('Erreur lors de la création de la recette:', error)
     }
-
-    onRecipeAdd(newRecipe)
-    setOpen(false)
   }
 
   return (

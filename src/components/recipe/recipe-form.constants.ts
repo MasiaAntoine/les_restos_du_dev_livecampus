@@ -8,15 +8,20 @@ export const ingredientSchema = z.object({
 })
 
 export const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Le nom de la recette doit contenir au moins 2 caractères.',
-  }),
-  preparationTime: z.string().min(1, {
-    message: 'Le temps de préparation est requis',
-  }),
-  ingredients: z.array(ingredientSchema).min(1, {
-    message: 'Ajoutez au moins un ingrédient',
-  }),
+  name: z.string().min(1, { message: 'Le nom est requis' }),
+  preparationTime: z
+    .string()
+    .min(1, { message: 'Le temps de préparation est requis' }),
+  ingredients: z.array(
+    z.object({
+      ingredientId: z.string(),
+      name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
+      quantity: z
+        .number()
+        .min(0, { message: 'La quantité doit être positive' }),
+      unit: z.string().min(1, { message: "L'unité est requise" }),
+    })
+  ),
 })
 
 export const unites = [
