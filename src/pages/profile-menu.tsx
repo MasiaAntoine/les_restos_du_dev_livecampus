@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProfileComponent from '@/components/profile/profile'
 import RecipeComponent from '@/components/recipe/recipe'
-import logo from '@/assets/logo.png'
+import logo from '@/assets/logo104-104.webp'
 
 export default function MenuProfileComponent() {
   return (
