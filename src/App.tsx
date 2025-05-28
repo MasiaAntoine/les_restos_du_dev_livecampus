@@ -72,7 +72,6 @@ function App() {
       <Toaster />
     </ServicesContext.Provider>
   )
-  )
 }
 
 export default App

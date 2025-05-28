@@ -62,7 +62,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
               className="text-lg font-bold text-white truncate"
               data-testid="recipe-title"
             >
-              {title}
+              {recipe.title}
             </h3>
             {showDetailsButton && (
               <Popover>
