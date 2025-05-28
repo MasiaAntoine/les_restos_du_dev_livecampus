@@ -148,7 +148,11 @@ export default function RecipeForm({
             <FormItem>
               <FormLabel>Nom de la recette</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Tarte aux pommes" {...field} />
+                <Input
+                  placeholder="Ex: Tarte aux pommes"
+                  {...field}
+                  data-testid="recipe-name-input"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
