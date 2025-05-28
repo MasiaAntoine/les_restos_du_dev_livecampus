@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import { useContext, useEffect, useState, useCallback } from 'react'; // Ajoutez useCallback aux imports
+import { useContext, useEffect, useState, useCallback } from 'react' // Ajoutez useCallback aux imports
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '../ui/button';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+} from '@/components/ui/select'
+import { Button } from '../ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import {
   Form,
   FormControl,
@@ -18,33 +18,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Trash2 } from 'lucide-react';
-import type { IngredientModel } from '@/models/Ingredient.model.ts';
-import { ServicesContext } from '@/contexts/contexts.tsx';
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Trash2 } from 'lucide-react'
+import type { IngredientModel } from '@/models/Ingredient.model.ts'
+import { ServicesContext } from '@/contexts/contexts.tsx'
 import {
   type FormData,
   formSchema,
   preparationTimes,
   truncateText,
   unites,
-} from './recipe-form.constants';
+} from './recipe-form.constants'
 
 interface RecipeFormProps {
-  onSubmit: (values: FormData) => void;
-  defaultValues?: FormData;
+  onSubmit: (values: FormData) => void
+  defaultValues?: FormData
 }
 
 export default function RecipeForm({
-                                     onSubmit,
-                                     defaultValues,
-                                   }: RecipeFormProps) {
-  const services = useContext(ServicesContext);
-  const ingredientService = services?.ingredientsService;
+  onSubmit,
+  defaultValues,
+}: RecipeFormProps) {
+  const services = useContext(ServicesContext)
+  const ingredientService = services?.ingredientsService
   const [availableIngredients, setAvailableIngredients] = useState<
     IngredientModel[]
-  >([]);
+  >([])
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -54,80 +54,89 @@ export default function RecipeForm({
       ingredients: [],
     },
     mode: 'onChange',
-  });
+  })
 
   const handleFormChange = useCallback(() => {
-    console.log('Valeurs du formulaire mises à jour:', form.getValues());
-    console.log('Erreurs du formulaire:', form.formState.errors);
-  }, [form]);
+    console.log('Valeurs du formulaire mises à jour:', form.getValues())
+    console.log('Erreurs du formulaire:', form.formState.errors)
+  }, [form])
 
   useEffect(() => {
-    const subscription = form.watch(handleFormChange);
-    return () => subscription.unsubscribe();
-  }, [form, handleFormChange]);
+    const subscription = form.watch(handleFormChange)
+    return () => subscription.unsubscribe()
+  }, [form, handleFormChange])
 
   useEffect(() => {
     const loadIngredients = async () => {
       if (services && ingredientService) {
         try {
-          const ingredients = await ingredientService.getAllIngredients();
-          setAvailableIngredients(ingredients);
+          const ingredients = await ingredientService.getAllIngredients()
+          setAvailableIngredients(ingredients)
         } catch (error) {
-          console.error('Erreur lors du chargement des ingrédients:', error);
+          console.error('Erreur lors du chargement des ingrédients:', error)
         }
       }
-    };
+    }
 
-    loadIngredients();
-  }, [services, ingredientService]);
+    loadIngredients()
+  }, [services, ingredientService])
 
   const addIngredient = () => {
     const newIngredient = {
-      ingredientId: '', // valeur par défaut vide mais définie
-      name: '', // valeur par défaut vide mais définie
-      quantity: 0, // valeur numérique par défaut
-      unit: '', // valeur par défaut vide mais définie
-    };
+      ingredientId: '',
+      name: '',
+      quantity: 0,
+      unit: '',
+    }
 
-    const currentIngredients = form.getValues('ingredients') || [];
-    form.setValue('ingredients', [...currentIngredients, newIngredient]);
-  };
+    const currentIngredients = form.getValues('ingredients') || []
+    form.setValue('ingredients', [...currentIngredients, newIngredient])
+  }
 
   const removeIngredient = (indexToRemove: number) => {
-    const currentIngredients = form.getValues('ingredients');
+    const currentIngredients = form.getValues('ingredients')
     form.setValue(
       'ingredients',
-      currentIngredients.filter((_, index) => index !== indexToRemove),
-    );
-  };
+      currentIngredients.filter((_, index) => index !== indexToRemove)
+    )
+  }
+
+  const getAvailableIngredientsForSelect = (currentIndex: number) => {
+    const selectedIngredients = form.watch('ingredients')
+    return availableIngredients.filter((ingredient) => {
+      return !selectedIngredients.some(
+        (selected, index) =>
+          selected.name === ingredient.name && index !== currentIndex
+      )
+    })
+  }
 
   return (
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          e.preventDefault();
+          e.preventDefault()
 
-          // Vérification des valeurs avant soumission
-          const currentValues = form.getValues();
+          const currentValues = form.getValues()
           const cleanedIngredients = currentValues.ingredients.map(
             (ingredient) => ({
               ingredientId: ingredient.ingredientId || '',
               name: ingredient.name || '',
               quantity: ingredient.quantity || 0,
               unit: ingredient.unit || '',
-            }),
-          );
+            })
+          )
 
           const cleanedValues = {
             ...currentValues,
             name: currentValues.name || '',
             preparationTime: currentValues.preparationTime || '0',
             ingredients: cleanedIngredients,
-          };
+          }
 
           form.handleSubmit(() => {
-            onSubmit(cleanedValues);
-          })(e);
+            onSubmit(cleanedValues)
+          })(e)
         }}
         className="space-y-6"
       >
@@ -141,7 +150,7 @@ export default function RecipeForm({
               <FormControl>
                 <Input placeholder="Ex: Tarte aux pommes" {...field} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -155,14 +164,14 @@ export default function RecipeForm({
               <FormLabel>Temps de préparation</FormLabel>
               <Select
                 onValueChange={(value) => {
-                  console.log('Temps de préparation sélectionné:', value);
-                  field.onChange(value);
+                  console.log('Temps de préparation sélectionné:', value)
+                  field.onChange(value)
                 }}
                 defaultValue={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Sélectionner le temps de préparation"/>
+                    <SelectValue placeholder="Sélectionner le temps de préparation" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -173,7 +182,7 @@ export default function RecipeForm({
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -189,7 +198,7 @@ export default function RecipeForm({
 
           <div className="h-[50vh] overflow-y-auto">
             {form.watch('ingredients').map((ingredient, index) => {
-              const fieldId = ingredient.ingredientId;
+              const fieldId = ingredient.ingredientId
               return (
                 <div
                   key={`ingredient-${fieldId}`}
@@ -205,39 +214,41 @@ export default function RecipeForm({
                           onValueChange={(value) => {
                             const selectedIngredient =
                               availableIngredients.find(
-                                (ing) => ing.name === value,
-                              );
+                                (ing) => ing.name === value
+                              )
                             if (selectedIngredient) {
                               form.setValue(
                                 `ingredients.${index}.ingredientId`,
-                                selectedIngredient.id,
-                              );
-                              field.onChange(value);
+                                selectedIngredient.id
+                              )
+                              field.onChange(value)
                             }
                           }}
                           value={field.value}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Sélectionner un ingrédient"/>
+                              <SelectValue placeholder="Sélectionner un ingrédient" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {availableIngredients.map((ing, optionIndex) => (
-                              <SelectItem
-                                key={
-                                  ing.id
-                                    ? `ingredient-${ing.id}`
-                                    : `ingredient-new-${optionIndex}-${fieldId}`
-                                }
-                                value={ing.name}
-                              >
-                                {truncateText(ing.name)}
-                              </SelectItem>
-                            ))}
+                            {getAvailableIngredientsForSelect(index).map(
+                              (ing, optionIndex) => (
+                                <SelectItem
+                                  key={
+                                    ing.id
+                                      ? `ingredient-${ing.id}`
+                                      : `ingredient-new-${optionIndex}-${fieldId}`
+                                  }
+                                  value={ing.name}
+                                >
+                                  {truncateText(ing.name)}
+                                </SelectItem>
+                              )
+                            )}
                           </SelectContent>
                         </Select>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -258,12 +269,12 @@ export default function RecipeForm({
                               const value =
                                 e.target.value === ''
                                   ? 0
-                                  : parseFloat(e.target.value);
-                              field.onChange(value);
+                                  : parseFloat(e.target.value)
+                              field.onChange(value)
                             }}
                           />
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -280,7 +291,7 @@ export default function RecipeForm({
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Unité"/>
+                              <SelectValue placeholder="Unité" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -294,7 +305,7 @@ export default function RecipeForm({
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -306,10 +317,10 @@ export default function RecipeForm({
                     className="p-2"
                     onClick={() => removeIngredient(index)}
                   >
-                    <Trash2 className="h-4 w-4"/>
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
@@ -319,5 +330,5 @@ export default function RecipeForm({
         </Button>
       </form>
     </Form>
-  );
+  )
 }
