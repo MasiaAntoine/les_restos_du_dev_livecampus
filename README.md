@@ -1,54 +1,102 @@
-# React + TypeScript + Vite
+# Les Restos du Dev 🍽️👩‍💻
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Une application web culinaire décalée où les développeurs peuvent partager leurs "recettes" de composants électroniques à déguster ! Un croisement improbable entre Marmiton et le monde de la tech.
 
-Currently, two official plugins are available:
+## 🌟 Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 Authentification utilisateur avec Firebase
+- 📝 Création, modification et suppression de recettes
+- 👥 Profils utilisateurs personnalisés
+- 📱 Interface responsive et moderne
+- 🎨 Design élégant avec Tailwind CSS et shadcn/ui
+- 🧪 Tests unitaires avec Jest
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies Utilisées
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React** - Framework frontend
+- **TypeScript** - Typage statique
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - Composants UI
+- **Firebase** - Backend et authentification
+- **Jest** - Framework de test
+- **Vercel** - Déploiement et hébergement
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🚀 Installation et Développement
+
+```bash
+# Cloner le projet
+git clone [url-du-repo]
+
+# Installer les dépendances
+pnpm install
+
+# Lancer le serveur de développement
+pnpm dev
+
+# Lancer les tests
+pnpm test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🧪 Tests
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Les tests sont écrits avec Jest. Pour exécuter la suite de tests :
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+# Lancer tous les tests
+pnpm test
+
+# Lancer les tests en mode watch
+pnpm test:watch
+
+# Voir la couverture des tests
+pnpm test:coverage
 ```
+
+## 📤 Déploiement
+
+Le projet est déployé automatiquement sur Vercel à chaque push sur la branche main.
+
+### Configuration Vercel
+
+Le fichier `vercel.json` est configuré pour gérer le routage SPA :
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+## 🔑 Configuration Firebase
+
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+
+```bash
+# filepath: .env
+VITE_FIREBASE_API_KEY=votre_api_key
+VITE_FIREBASE_AUTH_DOMAIN=votre_auth_domain
+VITE_FIREBASE_PROJECT_ID=votre_project_id
+VITE_FIREBASE_STORAGE_BUCKET=votre_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=votre_messaging_sender_id
+VITE_FIREBASE_APP_ID=votre_app_id
+```
+
+## 🎯 Objectifs du Projet
+
+- Créer une plateforme humoristique de recettes tech
+- Implémenter des tests unitaires complets
+- Maintenir un déploiement continu
+- Assurer une excellente couverture de tests
+
+## 💡 Exemples de Recettes
+
+- "RAM à la sauce RGB"
+- "Processeur grillé aux watts"
+- "Salade de câbles USB"
+- "Carte mère en croûte"
+
+## 🤝 Contribution
+
+1. Forkez le projet
+2. Créez votre branche de fonctionnalité
+3. Assurez-vous que tous les tests passent
+4. Soumettez une Pull Request
