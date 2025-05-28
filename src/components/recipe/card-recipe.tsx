@@ -58,8 +58,11 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white truncate">
-              {recipe.title}
+            <h3
+              className="text-lg font-bold text-white truncate"
+              data-testid="recipe-title"
+            >
+              {title}
             </h3>
             {showDetailsButton && (
               <Popover>
@@ -67,6 +70,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                   <Button
                     variant="ghost"
                     className="h-8 w-8 p-0 bg-white/10 hover:bg-white/20 rounded-md"
+                    data-testid="recipe-more-button"
                   >
                     <MoreVertical className="h-4 w-4 text-white" />
                   </Button>
@@ -82,6 +86,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
                       variant="ghost"
                       className="w-full justify-start text-red-500 hover:text-red-600 flex items-center gap-2"
                       onClick={handleDelete}
+                      data-testid="recipe-delete-button"
                     >
                       <Trash2 className="h-4 w-4" />
                       Supprimer

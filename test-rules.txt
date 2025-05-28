@@ -1,0 +1,65 @@
+Fichier de setup de test :
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
+
+// runs a clean after each test case (e.g. clearing jsdom)
+afterEach(() => {
+    cleanup();
+})
+
+
+
+Fichier de config vite (vite.config.js)
+mport { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    // 👋 add the line below to add jsdom to vite
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/tests/setup.js'
+  }
+})
+
+
+Fichier app.test.jsx
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import App from './App'
+test('loads and displays The App', async () => {
+// ARRANGE
+render(<App />)
+// ASSERT
+expect(screen.getByRole('nav')).toHaveTextContent('Navbar')
+})
+
+
+
+Composant
+export function Card() {
+return (
+<article>
+<h1 data-testid="titreCard">Mon Titre</h1>
+<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita
+laudantium omnis officia eos, vitae necessitatibus, quaerat quasi, accusamus praesentium
+voluptate odio est deleniti vero inventore. Quidem animi veritatis libero culpa!</p>
+</article>
+)
+
+
+Test
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import { Card } from './card'
+test('loads and displays The App', async () => {
+// ARRANGE
+render(<Card />)
+// ASSERT
+expect(screen.getByTestId('titreCard')).toHaveTextContent('Titre')
+})
+
+

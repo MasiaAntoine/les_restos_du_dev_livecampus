@@ -53,7 +53,11 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className={className}>
+        <Button
+          variant="ghost"
+          className={className}
+          data-testid="recipe-edit-button"
+        >
           <Pencil className="h-4 w-4" />
           Modifier
         </Button>

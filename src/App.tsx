@@ -66,10 +66,12 @@ function App() {
         recipesService: recipesService,
         currentUser: currentUser,
       }}
+      data-testid="services-context"
     >
       <Router />
       <Toaster />
     </ServicesContext.Provider>
+  )
   )
 }
 
