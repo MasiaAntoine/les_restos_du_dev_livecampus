@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const ingredientSchema = z.object({
-  ingredientId: z.string(),
+  ingredientId: z.string().optional(), // Rendre le champ optionnel
   name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
   quantity: z.number().min(0, { message: 'La quantité doit être positive' }),
   unit: z.string().min(1, { message: "L'unité est requise" }),
@@ -14,7 +14,7 @@ export const formSchema = z.object({
     .min(1, { message: 'Le temps de préparation est requis' }),
   ingredients: z.array(
     z.object({
-      ingredientId: z.string(),
+      ingredientId: z.string().optional(), // Rendre le champ optionnel
       name: z.string().min(1, { message: "Le nom de l'ingrédient est requis" }),
       quantity: z
         .number()

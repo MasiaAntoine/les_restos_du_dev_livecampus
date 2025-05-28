@@ -73,15 +73,16 @@ export default function RecipeForm({
   }, [services, ingredientService])
 
   const addIngredient = () => {
-    const currentIngredients = form.getValues('ingredients')
+    const newIngredient = {
+      ingredientId: '', // Valeur par défaut vide
+      name: '',
+      quantity: 0,
+      unit: '',
+    }
+
     form.setValue('ingredients', [
-      ...currentIngredients,
-      {
-        ingredientId: Math.random().toString(36).substr(2, 9),
-        name: '',
-        quantity: 0,
-        unit: '',
-      },
+      ...form.getValues('ingredients'),
+      newIngredient,
     ])
   }
 
