@@ -80,7 +80,10 @@ export default function RecipeComponent() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Mes Recettes</CardTitle>
-          <CardDescription>Découvrez mes délicieuses recettes</CardDescription>
+          <CardDescription>
+            Des composants électroniques à croquer : savourez vos recettes du
+            Dev !
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-6">

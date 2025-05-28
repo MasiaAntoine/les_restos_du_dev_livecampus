@@ -52,6 +52,12 @@ const formSchema = z.object({
   preparationTime: z.string().min(1, {
     message: 'Le temps de préparation est requis',
   }),
+  imageUrl: z
+    .string()
+    .url({
+      message: "Veuillez entrer une URL valide pour l'image",
+    })
+    .optional(),
   ingredients: z.array(ingredientSchema).min(1, {
     message: 'Ajoutez au moins un ingrédient',
   }),
@@ -96,6 +102,7 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
     defaultValues: {
       name: recipe.title,
       preparationTime: recipe.cookTime.split(' ')[0], // Extrait le nombre de minutes
+      imageUrl: recipe.imageUrl,
       ingredients: recipe.ingredients,
     },
   })
@@ -131,7 +138,9 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
       author: currentUser!.displayName || 'Anonyme',
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl:
+        values.imageUrl ||
+        'https://www.lunariarecruitment.co.uk/wp-content/uploads/sites/93/2013/11/dummy-image-square.jpg',
       ingredients: ingredients,
     }
     onRecipeEdit(newRecipe)
@@ -186,6 +195,23 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
                   <FormLabel>Nom de la recette</FormLabel>
                   <FormControl>
                     <Input placeholder="Ex: Tarte aux pommes" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL de l'image</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://exemple.com/image.jpg"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
