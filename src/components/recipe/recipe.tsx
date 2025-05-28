@@ -54,13 +54,13 @@ export default function RecipeComponent() {
     recipesService.createRecipe(newRecipe).then(() => setIsLoading(false))
   }
 
-  const handleEditRecipe = (id: string, updatedRecipe: object) => {
+  const handleEditRecipe = (updatedRecipe: RecipeModel) => {
     setRecipesList(
       recipesList.map((recipe) =>
-        recipe.id === id ? { ...recipe, ...updatedRecipe } : recipe
+        recipe.id === updatedRecipe.id ? updatedRecipe : recipe
       )
     )
-    console.log("appeler l'API Recette mise à jour:", updatedRecipe, isLoading)
+    console.log("appeler l'API Recette mise à jour:", updatedRecipe)
   }
 
   return (

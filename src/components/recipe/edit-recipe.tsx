@@ -75,13 +75,15 @@ const preparationTimes = Array.from({ length: 40 }, (_, i) => ({
 
 interface EditRecipeProps {
   recipe: RecipeModel
-  onRecipeEdit: (updatedRecipe: RecipeModel) => void
+  onRecipeEdit: (recipe: RecipeModel) => void
+  className?: string
 }
 
-export default function EditRecipeComponent({
+const EditRecipe: React.FC<EditRecipeProps> = ({
   recipe,
   onRecipeEdit,
-}: EditRecipeProps) {
+  className,
+}) => {
   const services = useContext(ServicesContext)
   const ingredientService = services?.ingredientsService
   const currentUser = services?.currentUser
@@ -161,10 +163,7 @@ export default function EditRecipeComponent({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="w-full justify-start flex items-center gap-2"
-        >
+        <Button variant="ghost" className={className}>
           <Pencil className="h-4 w-4" />
           Modifier
         </Button>
@@ -336,3 +335,5 @@ export default function EditRecipeComponent({
     </Dialog>
   )
 }
+
+export default EditRecipe

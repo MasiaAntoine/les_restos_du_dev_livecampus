@@ -74,12 +74,11 @@ export default function RegisterPage() {
             navigate('/login')
           } else {
             toast.error('Erreur lors de la création du compte')
-            console.error('Erreur lors de la création du compte')
           }
         })
     } catch (error) {
       console.error('Erreur lors de la création du compte:', error)
-      toast('Erreur lors de la création du compte:', error)
+      toast.error('Erreur lors de la création du compte')
     }
   }
 

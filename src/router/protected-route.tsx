@@ -1,9 +1,10 @@
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useContext, useEffect } from 'react'
 import { ServicesContext } from '../contexts/contexts.tsx'
 
 interface ProtectedRouteProps {
-  element: JSX.Element
+  element: React.ReactElement
   requireAuth?: boolean
 }
 

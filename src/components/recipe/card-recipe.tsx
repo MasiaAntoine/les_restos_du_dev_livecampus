@@ -15,7 +15,7 @@ interface RecipeCardProps {
   recipe: RecipeModel
   showDetailsButton?: boolean
   onDelete: (id: string) => void
-  onEdit: (updatedRecipe: RecipeModel) => void
+  onEdit: (recipe: RecipeModel) => void
   isLoading?: boolean
 }
 

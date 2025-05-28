@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProfileComponent from '@/components/profile/profile'
 import RecipeComponent from '@/components/recipe/recipe'
