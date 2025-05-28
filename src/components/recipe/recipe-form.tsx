@@ -241,9 +241,14 @@ export default function RecipeForm({
                             type="number"
                             placeholder="Quantité"
                             {...field}
-                            onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value))
-                            }
+                            value={field.value || ''}
+                            onChange={(e) => {
+                              const value =
+                                e.target.value === ''
+                                  ? 0
+                                  : parseFloat(e.target.value)
+                              field.onChange(value)
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
