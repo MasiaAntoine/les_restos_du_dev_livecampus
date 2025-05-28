@@ -68,6 +68,10 @@ interface RecipeFormProps {
   defaultValues?: FormData
 }
 
+const truncateText = (text: string, maxLength: number = 10) => {
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+}
+
 export default function RecipeForm({
   onSubmit,
   defaultValues,
@@ -177,7 +181,7 @@ export default function RecipeForm({
               return (
                 <div
                   key={`ingredient-${fieldId}`}
-                  className="flex gap-4 mb-4 items-center"
+                  className="flex gap-2 mb-4 items-center"
                 >
                   {/* Sélection de l'ingrédient */}
                   <FormField
@@ -202,7 +206,7 @@ export default function RecipeForm({
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Sélectionner un ingrédient" />
                             </SelectTrigger>
                           </FormControl>
@@ -216,7 +220,7 @@ export default function RecipeForm({
                                 }
                                 value={ing.name}
                               >
-                                {ing.name}
+                                {truncateText(ing.name)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -258,7 +262,7 @@ export default function RecipeForm({
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Unité" />
                             </SelectTrigger>
                           </FormControl>
@@ -268,7 +272,7 @@ export default function RecipeForm({
                                 key={`unit-option-${unite.value}-${fieldId}`}
                                 value={unite.value}
                               >
-                                {unite.label}
+                                {truncateText(unite.label)}
                               </SelectItem>
                             ))}
                           </SelectContent>
