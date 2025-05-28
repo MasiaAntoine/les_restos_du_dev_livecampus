@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Register from '../pages/register'
 import Login from '../pages/login'
 import ForgotPassword from '../pages/forgot-password'
@@ -10,6 +10,9 @@ export default function index() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redirection de la route racine vers /profile */}
+        <Route path="/" element={<Navigate to="/profile" replace />} />
+
         {/* Routes accessibles uniquement aux utilisateurs non connectés */}
         <Route
           path="/register"
