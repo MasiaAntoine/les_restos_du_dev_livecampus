@@ -12,7 +12,8 @@ import {
 import { Button } from '../ui/button'
 import { Pencil } from 'lucide-react'
 import type { RecipeModel } from '@/models/Recipe.model.ts'
-import RecipeForm, { FormData } from './recipe-form'
+import RecipeForm from './recipe-form'
+import type { FormData } from '@/components/recipe/recipe-form.constants'
 
 interface EditRecipeProps {
   recipe: RecipeModel
@@ -43,7 +44,17 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
       ...recipe,
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
-      ingredients: values.ingredients,
+      ingredients: values.ingredients.map(
+        (ingredient: {
+          ingredientId?: string
+          name: string
+          quantity: number
+          unit: string
+        }) => ({
+          ...ingredient,
+          ingredientId: ingredient.ingredientId || '',
+        })
+      ),
     }
 
     onRecipeEdit(updatedRecipe)
