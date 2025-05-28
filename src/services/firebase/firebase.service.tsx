@@ -6,6 +6,7 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  deleteDoc,
   collection,
   query,
   where,
@@ -74,7 +75,7 @@ export class FirebaseService {
 
   public async deleteDocument(path: string): Promise<void> {
     const docRef: DocumentReference = doc(this.getFs(), path)
-    return setDoc(docRef, {}, { merge: true })
+    return deleteDoc(docRef)
   }
 
   public async getAllDocuments<T>(collectionName: string): Promise<T[]> {

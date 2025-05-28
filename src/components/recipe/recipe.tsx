@@ -37,8 +37,20 @@ export default function RecipeComponent() {
   }, [services, recipesService, currentUser])
 
   const handleDeleteRecipe = (id: string) => {
-    setRecipesList(recipesList.filter((recipe) => recipe.id !== id))
-    console.log("appeler l'API pour supprimer la recette avec l'ID:", id)
+    if (!services || !recipesService) {
+      throw new Error('Services or recipesService not found')
+    }
+    setIsLoading(true)
+    recipesService
+      .deleteRecipe(id)
+      .then(() => {
+        setRecipesList(recipesList.filter((recipe) => recipe.id !== id))
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la suppression de la recette:', error)
+        setIsLoading(false)
+      })
   }
 
   const handleAddRecipe = (newRecipe: RecipeModel) => {
