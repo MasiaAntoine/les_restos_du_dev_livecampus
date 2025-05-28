@@ -1,9 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /login
-Disallow: /register
-Disallow: /forgot-password
-Disallow: /profile
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+Allow: /profile
 
 # Configuration du site
 Sitemap: https://les-restos-du-dev-livecampus.vercel.app/sitemap.xml
