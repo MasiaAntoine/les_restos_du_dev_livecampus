@@ -25,18 +25,30 @@ export default function AddRecipeComponent({
   const [open, setOpen] = useState(false)
 
   const handleSubmit = (values: FormData) => {
-    console.log('AddRecipe handleSubmit appelé avec:', values)
+    console.log(
+      'AddRecipe handleSubmit appelé avec:',
+      JSON.stringify(values, null, 2)
+    )
     const recipeId = uuid()
     try {
       const newRecipe: RecipeModel = {
         id: recipeId,
-        title: values.name,
-        cookTime: `${values.preparationTime} minutes`,
+        title: values.name || 'Sans titre',
+        cookTime: `${values.preparationTime || '0'} minutes`,
         author: currentUser?.displayName || 'Anonyme',
         imageUrl: 'https://via.placeholder.com/150',
-        ingredients: values.ingredients,
+        ingredients: values.ingredients.map((ing) => ({
+          ...ing,
+          ingredientId: ing.ingredientId || '',
+          name: ing.name || '',
+          quantity: ing.quantity || 0,
+          unit: ing.unit || '',
+        })),
       }
-      console.log('Nouvelle recette créée:', newRecipe)
+      console.log(
+        'Nouvelle recette (nettoyée):',
+        JSON.stringify(newRecipe, null, 2)
+      )
       onRecipeAdd(newRecipe)
       setOpen(false)
     } catch (error) {

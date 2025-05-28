@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useCallback } from 'react' // Ajoutez useCallback aux imports
 import {
   Select,
   SelectContent,
@@ -53,37 +53,44 @@ export default function RecipeForm({
       preparationTime: '',
       ingredients: [],
     },
-    mode: 'onChange', // Ajout du mode onChange pour voir les erreurs en temps réel
+    mode: 'onChange',
   })
 
-  // Ajoutons un useEffect pour surveiller les changements
-  useEffect(() => {
+  const handleFormChange = useCallback(() => {
     console.log('Valeurs du formulaire mises à jour:', form.getValues())
     console.log('Erreurs du formulaire:', form.formState.errors)
-  }, [form.watch()])
+  }, [form])
 
   useEffect(() => {
-    if (services && ingredientService) {
-      ingredientService
-        .getAllIngredients()
-        .then((ingredients: IngredientModel[]) =>
+    const subscription = form.watch(handleFormChange)
+    return () => subscription.unsubscribe()
+  }, [form, handleFormChange])
+
+  useEffect(() => {
+    const loadIngredients = async () => {
+      if (services && ingredientService) {
+        try {
+          const ingredients = await ingredientService.getAllIngredients()
           setAvailableIngredients(ingredients)
-        )
+        } catch (error) {
+          console.error('Erreur lors du chargement des ingrédients:', error)
+        }
+      }
     }
+
+    loadIngredients()
   }, [services, ingredientService])
 
   const addIngredient = () => {
     const newIngredient = {
-      ingredientId: '', // Valeur par défaut vide
-      name: '',
-      quantity: 0,
-      unit: '',
+      ingredientId: '', // valeur par défaut vide mais définie
+      name: '', // valeur par défaut vide mais définie
+      quantity: 0, // valeur numérique par défaut
+      unit: '', // valeur par défaut vide mais définie
     }
 
-    form.setValue('ingredients', [
-      ...form.getValues('ingredients'),
-      newIngredient,
-    ])
+    const currentIngredients = form.getValues('ingredients') || []
+    form.setValue('ingredients', [...currentIngredients, newIngredient])
   }
 
   const removeIngredient = (indexToRemove: number) => {
@@ -98,14 +105,33 @@ export default function RecipeForm({
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          e.preventDefault() // Assurons-nous que le formulaire ne se soumet pas deux fois
+          e.preventDefault()
           console.log('Tentative de soumission du formulaire')
-          console.log('Erreurs actuelles:', form.formState.errors)
-          console.log('Valeurs actuelles:', form.getValues())
 
-          form.handleSubmit((values) => {
-            console.log('Validation réussie, valeurs:', values)
-            onSubmit(values)
+          // Vérification des valeurs avant soumission
+          const currentValues = form.getValues()
+          const cleanedIngredients = currentValues.ingredients.map(
+            (ingredient) => ({
+              ingredientId: ingredient.ingredientId || '',
+              name: ingredient.name || '',
+              quantity: ingredient.quantity || 0,
+              unit: ingredient.unit || '',
+            })
+          )
+
+          const cleanedValues = {
+            ...currentValues,
+            name: currentValues.name || '',
+            preparationTime: currentValues.preparationTime || '0',
+            ingredients: cleanedIngredients,
+          }
+
+          console.log('Valeurs nettoyées:', cleanedValues)
+          console.log('Erreurs actuelles:', form.formState.errors)
+
+          form.handleSubmit(() => {
+            console.log('Validation réussie, valeurs:', cleanedValues)
+            onSubmit(cleanedValues)
           })(e)
         }}
         className="space-y-6"
