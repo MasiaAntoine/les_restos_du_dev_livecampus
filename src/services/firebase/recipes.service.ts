@@ -1,42 +1,30 @@
 import type {
   FirebaseService,
   QueryWhereElement,
-} from '@/services/firebase/firebase.service.tsx'
-import type { RecipePartModel } from '@/models/RecipePart.model.ts'
-import type { RecipeModel } from '@/models/Recipe.model.ts'
+} from '@/services/firebase/firebase.service.tsx';
+import type { RecipeModel } from '@/models/Recipe.model.ts';
 
 export class RecipesService {
-  #fs: FirebaseService
+  #fs: FirebaseService;
 
   constructor(fs: FirebaseService) {
-    this.#fs = fs
-  }
-
-  async #getRecipeIngredients(recipeId: string): Promise<RecipePartModel[]> {
-    return await this.#fs.getAllDocuments<RecipePartModel>(
-      'RECIPES/' + recipeId + '/INGREDIENTS'
-    )
+    this.#fs = fs;
   }
 
   public async getAllRecipes(): Promise<RecipeModel[]> {
     const recipes: RecipeModel[] = await this.#fs.getAllDocuments<RecipeModel>(
-      'RECIPES'
-    )
-
-    for (const recipe of recipes) {
-      recipe.ingredients = await this.#getRecipeIngredients(recipe.id)
-    }
-    return recipes
+      'RECIPES',
+    );
+    return recipes;
   }
 
   public async getRecipeById(id: string): Promise<RecipeModel | null> {
     const recipe: RecipeModel | undefined =
-      await this.#fs.getDocument<RecipeModel>(`RECIPES/${id}`)
+      await this.#fs.getDocument<RecipeModel>(`RECIPES/${id}`);
     if (!recipe) {
-      return null
+      return null;
     }
-    recipe.ingredients = await this.#getRecipeIngredients(recipe.id)
-    return recipe
+    return recipe;
   }
 
   public async getRecipesByAuthor(author: string): Promise<RecipeModel[]> {
@@ -44,30 +32,27 @@ export class RecipesService {
       fieldName: 'author',
       operator: '==',
       value: author,
-    }
+    };
     const recipes: RecipeModel[] =
-      await this.#fs.getDocumentsWhere<RecipeModel>('RECIPES', [query], 'title')
-    for (const recipe of recipes) {
-      recipe.ingredients = await this.#getRecipeIngredients(recipe.id)
-    }
-    return recipes.filter((recipe: RecipeModel) => recipe.author === author)
+      await this.#fs.getDocumentsWhere<RecipeModel>('RECIPES', [query], 'title');
+    return recipes.filter((recipe: RecipeModel) => recipe.author === author);
   }
 
   public async createRecipe(recipe: RecipeModel) {
-    await this.#fs.setDocument(`RECIPES/${recipe.id}`, recipe)
+    await this.#fs.setDocument(`RECIPES/${recipe.id}`, recipe);
   }
 
   public async updateRecipe(recipe: RecipeModel) {
     if (!recipe.id) {
-      throw new Error('Recipe ID is required for update')
+      throw new Error('Recipe ID is required for update');
     }
-    await this.#fs.setDocument(`RECIPES/${recipe.id}`, recipe)
+    await this.#fs.setDocument(`RECIPES/${recipe.id}`, recipe);
   }
 
   public async deleteRecipe(id: string) {
     if (!id) {
-      throw new Error('Recipe ID is required for deletion')
+      throw new Error('Recipe ID is required for deletion');
     }
-    await this.#fs.deleteDocument(`RECIPES/${id}`)
+    await this.#fs.deleteDocument(`RECIPES/${id}`);
   }
 }
