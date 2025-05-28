@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '../ui/button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form' // Suppression de UseFormReturn
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {
   Form,
