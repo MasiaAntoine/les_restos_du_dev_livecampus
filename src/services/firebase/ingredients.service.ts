@@ -13,7 +13,7 @@ export class IngredientsService {
   }
 
   public async getIngredientById(id: string): Promise<IngredientModel | null> {
-    const ingredient: IngredientModel | undefined =  await this.#fs.getDocument<IngredientModel>(`INGREDIENTS/${id}`);
+    const ingredient: IngredientModel | undefined = await this.#fs.getDocument<IngredientModel>(`INGREDIENTS/${id}`);
     if (!ingredient) {
       return null;
     }
