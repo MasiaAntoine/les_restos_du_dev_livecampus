@@ -131,7 +131,8 @@ const EditRecipe: React.FC<EditRecipeProps> = ({
       title: values.name,
       cookTime: `${values.preparationTime} minutes`,
       author: currentUser!.displayName || 'Anonyme',
-      imageUrl: 'https://via.placeholder.com/150',
+      imageUrl:
+        'https://www.lunariarecruitment.co.uk/wp-content/uploads/sites/93/2013/11/dummy-image-square.jpg',
       ingredients: ingredients,
     }
     onRecipeEdit(newRecipe)
