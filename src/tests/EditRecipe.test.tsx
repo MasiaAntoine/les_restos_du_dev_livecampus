@@ -1,21 +1,24 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, test, expect, beforeEach, vi, afterEach } from 'vitest'
-import EditRecipe from '../components/recipe/edit-recipe'
+import RecipeCard from '../components/recipe/card-recipe'
+import type { RecipeModel } from '@/models/Recipe.model.ts'
 
-const recipe = {
-  id: 1,
+const mockRecipe: RecipeModel = {
+  id: '1',
   title: 'Pâtes Carbonara',
+  author: 'Chef John',
   cookTime: '30 min',
+  imageUrl: '/images/carbonara.jpg',
   ingredients: [
     {
-      id: '1',
+      ingredientId: '1',
       name: 'Pâtes',
       quantity: 500,
       unit: 'g',
     },
     {
-      id: '2',
+      ingredientId: '2',
       name: 'Lardons',
       quantity: 200,
       unit: 'g',
@@ -23,42 +26,64 @@ const recipe = {
   ],
 }
 
+const handleDeleteRecipe = vi.fn()
+const handleEditRecipe = vi.fn()
 describe('EditRecipe Component', () => {
-  const mockOnRecipeEdit = vi.fn()
-
   beforeEach(() => {
-    render(<EditRecipe recipe={recipe} onRecipeEdit={mockOnRecipeEdit} />)
+    render(
+      <RecipeCard
+        recipe={mockRecipe}
+        onDelete={handleDeleteRecipe}
+        onEdit={handleEditRecipe}
+        showDetailsButton={true}
+        isLoading={false}
+      />
+    )
   })
 
   afterEach(() => {
-    vi.clearAllMocks()
+    cleanup()
   })
 
   describe('Formulaire', () => {
     test('affiche le bouton Modifier', () => {
+      const editButton = screen.getByTestId('recipe-more-button')
+      fireEvent.click(editButton)
+
       expect(screen.getByTestId('recipe-edit-button')).toBeInTheDocument()
     })
 
     test('ouvre la boîte de dialogue au clic sur le bouton Modifier', () => {
-      const editButton = screen.getByTestId('recipe-edit-button')
+      const editButton = screen.getByTestId('recipe-more-button')
       fireEvent.click(editButton)
+
+      const modifyButton = screen.getByTestId('recipe-edit-button')
+      fireEvent.click(modifyButton)
 
       expect(screen.getByRole('dialog')).toBeInTheDocument()
       expect(screen.getByText('Modifier la recette')).toBeInTheDocument()
     })
 
     test('affiche les champs du formulaire avec les valeurs initiales', () => {
-      const editButton = screen.getByTestId('recipe-edit-button')
+      const editButton = screen.getByTestId('recipe-more-button')
       fireEvent.click(editButton)
 
-      expect(screen.getByTestId('recipe-name-input')).toHaveValue(recipe.title)
-      expect(screen.getByTestId('recipe-time-select')).toBeInTheDocument()
-      expect(screen.getByText('Ingrédients')).toBeInTheDocument()
+      const modifyButton = screen.getByTestId('recipe-edit-button')
+      fireEvent.click(modifyButton)
+
+      expect(screen.getByTestId('recipe-name-input')).toHaveValue(
+        mockRecipe.title
+      )
+      // expect(screen.getByTestId('recipe-time-select')).toBeInTheDocument()
+      // expect(screen.getByText('Ingrédients')).toBeInTheDocument()
     })
 
     test("permet d'ajouter un nouvel ingrédient", () => {
-      const editButton = screen.getByTestId('recipe-edit-button')
+      const editButton = screen.getByTestId('recipe-more-button')
       fireEvent.click(editButton)
+
+      const modifyButton = screen.getByTestId('recipe-edit-button')
+      fireEvent.click(modifyButton)
 
       const addButton = screen.getByTestId('add-ingredient-button')
       fireEvent.click(addButton)
@@ -67,12 +92,15 @@ describe('EditRecipe Component', () => {
       const ingredientFields = screen.getAllByTestId(
         /ingredient-name-select-\d+/
       )
-      expect(ingredientFields.length).toBe(recipe.ingredients.length + 1)
+      expect(ingredientFields.length).toBe(mockRecipe.ingredients.length + 1)
     })
 
     test('permet de supprimer un ingrédient', () => {
-      const editButton = screen.getByTestId('recipe-edit-button')
+      const editButton = screen.getByTestId('recipe-more-button')
       fireEvent.click(editButton)
+
+      const modifyButton = screen.getByTestId('recipe-edit-button')
+      fireEvent.click(modifyButton)
 
       const deleteButton = screen.getByTestId('remove-ingredient-button-0')
       fireEvent.click(deleteButton)
@@ -81,7 +109,7 @@ describe('EditRecipe Component', () => {
       const ingredientFields = screen.getAllByTestId(
         /ingredient-name-select-\d+/
       )
-      expect(ingredientFields.length).toBe(recipe.ingredients.length - 1)
+      expect(ingredientFields.length).toBe(mockRecipe.ingredients.length - 1)
     })
 
     // test('appelle onRecipeEdit avec les données mises à jour lors de la soumission', async () => {

@@ -178,7 +178,7 @@ export default function RecipeForm({
                     <SelectValue placeholder="Sélectionner le temps de préparation" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent data-testid="recipe-time-select">
                   {preparationTimes.map((time) => (
                     <SelectItem key={time.value} value={time.value}>
                       {time.label}
@@ -195,7 +195,11 @@ export default function RecipeForm({
         <div>
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">Ingrédients</h3>
-            <Button type="button" onClick={addIngredient}>
+            <Button
+              type="button"
+              onClick={addIngredient}
+              data-testid="add-ingredient-button"
+            >
               Ajouter un ingrédient
             </Button>
           </div>
@@ -231,7 +235,10 @@ export default function RecipeForm({
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger
+                              className="w-full"
+                              data-testid={`ingredient-name-select-${index}`}
+                            >
                               <SelectValue placeholder="Sélectionner un ingrédient" />
                             </SelectTrigger>
                           </FormControl>
@@ -245,6 +252,7 @@ export default function RecipeForm({
                                       : `ingredient-new-${optionIndex}-${fieldId}`
                                   }
                                   value={ing.name}
+                                  data-testid={`ingredient-option-${ing.name}`}
                                 >
                                   {truncateText(ing.name)}
                                 </SelectItem>
@@ -276,6 +284,7 @@ export default function RecipeForm({
                                   : parseFloat(e.target.value)
                               field.onChange(value)
                             }}
+                            data-testid={`ingredient-quantity-input-${index}`}
                           />
                         </FormControl>
                         <FormMessage />
@@ -294,7 +303,10 @@ export default function RecipeForm({
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger
+                              className="w-full"
+                              data-testid={`ingredient-unit-select-${index}`}
+                            >
                               <SelectValue placeholder="Unité" />
                             </SelectTrigger>
                           </FormControl>
@@ -303,6 +315,7 @@ export default function RecipeForm({
                               <SelectItem
                                 key={`unit-option-${unite.value}-${fieldId}`}
                                 value={unite.value}
+                                data-testid={`unit-option-${unite.value}`}
                               >
                                 {truncateText(unite.label)}
                               </SelectItem>
@@ -320,6 +333,7 @@ export default function RecipeForm({
                     variant="ghost"
                     className="p-2"
                     onClick={() => removeIngredient(index)}
+                    data-testid={`remove-ingredient-button-${index}`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -329,7 +343,7 @@ export default function RecipeForm({
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" data-testid="submit-edit-form">
           Enregistrer
         </Button>
       </form>

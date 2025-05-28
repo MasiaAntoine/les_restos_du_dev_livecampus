@@ -102,14 +102,14 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       <div className="p-4 space-y-2">
         <div className="flex items-center justify-between text-sm text-gray-600">
           <div className="flex items-center space-x-2">
-            <span className="flex items-center">
+            <span className="flex items-center" data-testid="recipe-cook-time">
               <Clock className="h-4 w-4 mr-1" />
               {recipe.cookTime}
             </span>
           </div>
           {!showDetailsButton && (
             <div className="flex items-center space-x-2">
-              <span className="flex items-center">
+              <span className="flex items-center" data-testid="recipe-author">
                 <User className="h-4 w-4 mr-1" />
                 {recipe.author}
               </span>
