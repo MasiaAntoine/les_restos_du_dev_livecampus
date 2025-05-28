@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "les_restos_du_dev_livecampus",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ]
+}
