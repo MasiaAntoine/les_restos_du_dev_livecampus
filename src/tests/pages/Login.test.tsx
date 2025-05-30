@@ -37,17 +37,23 @@ describe('LoginPage', () => {
 
   test("devrait afficher des messages d'erreur lors de la soumission d'un formulaire vide", async () => {
     setup()
-    const submitButton = screen.getByRole('button', { name: /se connecter/i })
+    const submitButton = screen.getByTestId('login-submit')
+    const emailInput = screen.getByTestId('input-email')
+    const passwordInput = screen.getByTestId('input-password')
+    fireEvent.blur(emailInput)
+    fireEvent.blur(passwordInput)
     fireEvent.click(submitButton)
 
-    expect(
-      await screen.findByText(/Veuillez entrer une adresse email valide/i)
-    ).toBeInTheDocument()
-    expect(
-      await screen.findByText(
-        /Le mot de passe doit contenir au moins 6 caractères/i
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute(
+        'data-error-email',
+        'Veuillez entrer une adresse email valide.'
       )
-    ).toBeInTheDocument()
+      expect(passwordInput).toHaveAttribute(
+        'data-error-password',
+        'Le mot de passe doit contenir au moins 6 caractères.'
+      )
+    })
   })
 
   test("devrait basculer la visibilité du mot de passe lors du clic sur l'icône œil", () => {
