@@ -1,24 +1,44 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, test, expect, vi } from 'vitest'
+import type { Mock } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import RegisterPage from '@/pages/register'
-import { ServicesContext } from '@/contexts/contexts'
+import { ServicesContext, type Services } from '@/contexts/contexts'
+
+type MockedClass<T> = {
+  [P in keyof T]: T[P] extends Function ? Mock : T[P]
+}
+
+type MockServices = {
+  authService: MockedClass<Services['authService']>
+  userService: Services['userService']
+  recipesService: Services['recipesService']
+  ingredientsService: Services['ingredientsService']
+  currentUser: Services['currentUser']
+}
 
 describe('RegisterPage', () => {
   const setup = () => {
     const mockServices = {
       authService: {
         register: vi.fn(),
+        signOut: vi.fn(),
+        signIn: vi.fn(),
+        '#firebaseService': {},
+        '#userService': {},
+        '#setcurrentUser': vi.fn(),
       },
       userService: {},
       recipesService: {},
-    }
+      ingredientsService: {},
+      currentUser: null,
+    } as unknown as MockServices
 
     return {
       mockServices,
       ...render(
-        <ServicesContext.Provider value={mockServices}>
+        <ServicesContext.Provider value={mockServices as unknown as Services}>
           <BrowserRouter>
             <RegisterPage />
           </BrowserRouter>
@@ -198,7 +218,7 @@ describe('RegisterPage', () => {
     const confirmPasswordInput = screen.getByTestId('input-confirm-password')
     const submitButton = screen.getByTestId('register-submit')
 
-    mockServices.authService.register.mockResolvedValueOnce()
+    mockServices.authService.register.mockResolvedValueOnce({})
 
     // Remplir les champs
     fireEvent.input(usernameInput, { target: { value: 'testuser' } })

@@ -20,7 +20,13 @@ describe('LoginPage', () => {
         signIn: vi.fn(),
       },
       userService: {},
-      recipesService: {},
+      recipesService: {
+        getAllRecipes: vi.fn(),
+      },
+      ingredientsService: {
+        getAllIngredients: vi.fn(),
+      },
+      currentUser: null,
     }
 
     return {

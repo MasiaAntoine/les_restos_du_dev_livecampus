@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
-import AddRecipeComponent from '../../../components/recipe/add-recipe'
+import AddRecipeComponent from '@/components/recipe/add-recipe'
 import { ServicesContext } from '@/contexts/contexts'
 import { AuthService } from '@/services/firebase/auth.service'
 import { UserService } from '@/services/firebase/user.service'
