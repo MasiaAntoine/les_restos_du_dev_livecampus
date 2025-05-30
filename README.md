@@ -24,32 +24,23 @@ Une application web culinaire décalée où les développeurs peuvent partager l
 ## 🚀 Installation et Développement
 
 ```bash
-# Cloner le projet
-git clone [url-du-repo]
-
 # Installer les dépendances
 pnpm install
 
 # Lancer le serveur de développement
 pnpm dev
-
-# Lancer les tests
-pnpm test
 ```
 
 ## 🧪 Tests
 
-Les tests sont écrits avec Jest. Pour exécuter la suite de tests :
+Les tests sont écrits avec Vitest et Jest. Pour exécuter la suite de tests :
 
 ```bash
-# Lancer tous les tests
+# Lancer tous les tests avec Jest
 pnpm test
 
-# Lancer les tests en mode watch
-pnpm test:watch
-
-# Voir la couverture des tests
-pnpm test:coverage
+# Voir la couverture des tests avec Vitest
+npx vitest --coverage
 ```
 
 ## 📤 Déploiement
