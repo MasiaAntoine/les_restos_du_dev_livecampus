@@ -85,9 +85,8 @@ VITE_FIREBASE_APP_ID=votre_app_id
 - "Salade de câbles USB"
 - "Carte mère en croûte"
 
-## 🤝 Contribution
+## 👥 Contributeurs
 
-1. Forkez le projet
-2. Créez votre branche de fonctionnalité
-3. Assurez-vous que tous les tests passent
-4. Soumettez une Pull Request
+- Tristan
+- Corentin
+- Antoine
