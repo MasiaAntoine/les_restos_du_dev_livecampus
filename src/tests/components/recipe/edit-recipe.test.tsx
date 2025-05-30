@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, test, expect, beforeEach, vi, afterEach } from 'vitest'
-import RecipeCard from '../components/recipe/card-recipe'
+import RecipeCard from '../../../components/recipe/card-recipe'
 import type { RecipeModel } from '@/models/Recipe.model.ts'
 
 const mockRecipe: RecipeModel = {
