@@ -174,13 +174,20 @@ export default function RecipeForm({
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger
+                    className="w-full"
+                    data-testid="recipe-time-select"
+                  >
                     <SelectValue placeholder="Sélectionner le temps de préparation" />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent data-testid="recipe-time-select">
+                <SelectContent data-testid="recipe-time-select-content">
                   {preparationTimes.map((time) => (
-                    <SelectItem key={time.value} value={time.value}>
+                    <SelectItem
+                      key={time.value}
+                      value={time.value}
+                      data-testid={`time-option-${time.value}`}
+                    >
                       {time.label}
                     </SelectItem>
                   ))}
@@ -242,7 +249,7 @@ export default function RecipeForm({
                               <SelectValue placeholder="Sélectionner un ingrédient" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent data-testid="add-ingredient-name-select-content">
                             {getAvailableIngredientsForSelect(index).map(
                               (ing, optionIndex) => (
                                 <SelectItem

@@ -35,7 +35,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 
   if (isLoading) {
     return (
-      <div className="w-full rounded-lg overflow-hidden border bg-white shadow-lg animate-pulse">
+      <div
+        className="w-full rounded-lg overflow-hidden border bg-white shadow-lg animate-pulse"
+        data-testid="loading-card"
+      >
         <div className="relative aspect-[4/3] w-full bg-gray-200" />
         <div className="p-4 space-y-2">
           <div className="h-4 bg-gray-200 rounded w-3/4" />

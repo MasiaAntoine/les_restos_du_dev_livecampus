@@ -61,7 +61,9 @@ export default function AddRecipeComponent({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="mb-4">Créer une recette</Button>
+        <Button className="mb-4" data-testid="add-recipe-button">
+          Créer une recette
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
