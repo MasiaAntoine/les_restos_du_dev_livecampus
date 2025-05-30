@@ -20,7 +20,6 @@ export default defineConfig({
       provider: 'v8',
       exclude: [
         'node_modules/**',
-        'src/components/ui/**',
         'src/vite-env.d.ts',
         'dist/**',
         'eslint.config.js',
@@ -30,6 +29,8 @@ export default defineConfig({
         'src/models/**',
         'src/App.tsx',
         'src/router/index.tsx',
+        'src/lib/**',
+        'src/contexts/**',
       ],
     },
   },
