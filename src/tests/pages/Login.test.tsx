@@ -4,6 +4,14 @@ import { describe, test, expect, vi } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import LoginPage from '@/pages/login'
 import { ServicesContext } from '@/contexts/contexts'
+import { toast } from 'sonner'
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+  },
+}))
 
 describe('LoginPage', () => {
   const setup = () => {
@@ -135,6 +143,81 @@ describe('LoginPage', () => {
     fireEvent.click(submitButton)
     await waitFor(() => {
       expect(passwordInput).toHaveAttribute('data-error-password', '')
+    })
+  })
+
+  test('devrait gérer une connexion réussie', async () => {
+    const { mockServices } = setup()
+    const emailInput = screen.getByTestId('input-email')
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('login-submit')
+
+    mockServices.authService.signIn.mockResolvedValueOnce()
+    mockServices.recipesService.getAllRecipes = vi
+      .fn()
+      .mockResolvedValueOnce([])
+
+    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
+    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(mockServices.authService.signIn).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123'
+      )
+      expect(toast.success).toHaveBeenCalledWith('Connexion réussie')
+    })
+  })
+
+  test('devrait gérer une erreur de connexion', async () => {
+    const { mockServices } = setup()
+    const emailInput = screen.getByTestId('input-email')
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('login-submit')
+
+    mockServices.authService.signIn.mockRejectedValueOnce(
+      new Error('Erreur de connexion')
+    )
+    mockServices.recipesService.getAllRecipes = vi
+      .fn()
+      .mockResolvedValueOnce([])
+
+    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
+    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(mockServices.authService.signIn).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123'
+      )
+      expect(toast.error).toHaveBeenCalledWith('Erreur lors de la connexion')
+    })
+  })
+
+  test('ne devrait pas procéder si les services ne sont pas disponibles', async () => {
+    vi.clearAllMocks()
+
+    render(
+      <ServicesContext.Provider value={null}>
+        <BrowserRouter>
+          <LoginPage />
+        </BrowserRouter>
+      </ServicesContext.Provider>
+    )
+
+    const emailInput = screen.getByTestId('input-email')
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('login-submit')
+
+    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
+    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(toast.success).not.toHaveBeenCalled()
+      expect(toast.error).not.toHaveBeenCalled()
     })
   })
 })
