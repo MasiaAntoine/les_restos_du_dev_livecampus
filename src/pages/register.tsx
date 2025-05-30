@@ -108,11 +108,16 @@ export default function RegisterPage() {
             <FormField
               control={form.control}
               name="username"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Nom d'utilisateur</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input
+                      placeholder="John Doe"
+                      {...field}
+                      data-testid="input-username"
+                      data-error-username={fieldState.error?.message || ''}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,7 +127,7 @@ export default function RegisterPage() {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -130,6 +135,8 @@ export default function RegisterPage() {
                       type="email"
                       placeholder="john@example.com"
                       {...field}
+                      data-testid="input-email"
+                      data-error-email={fieldState.error?.message || ''}
                     />
                   </FormControl>
                   <FormMessage />
@@ -140,7 +147,7 @@ export default function RegisterPage() {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
@@ -149,6 +156,8 @@ export default function RegisterPage() {
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        data-testid="input-password"
+                        data-error-password={fieldState.error?.message || ''}
                       />
                       <button
                         type="button"
@@ -171,7 +180,7 @@ export default function RegisterPage() {
             <FormField
               control={form.control}
               name="confirmPassword"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Confirmer le mot de passe</FormLabel>
                   <FormControl>
@@ -180,6 +189,10 @@ export default function RegisterPage() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...field}
+                        data-testid="input-confirm-password"
+                        data-error-confirm-password={
+                          fieldState.error?.message || ''
+                        }
                       />
                       <button
                         type="button"
@@ -201,7 +214,11 @@ export default function RegisterPage() {
               )}
             />
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              data-testid="register-submit"
+            >
               S'inscrire
             </Button>
           </form>
