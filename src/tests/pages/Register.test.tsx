@@ -169,16 +169,32 @@ describe('RegisterPage', () => {
     })
   })
 
-  test('devrait valider correctement le champ mot de passe', async () => {
+  test('devrait valider la correspondance des mots de passe', async () => {
     setup()
     const passwordInput = screen.getByTestId('input-password')
+    const confirmPasswordInput = screen.getByTestId('input-confirm-password')
     const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.input(passwordInput, { target: { value: '123456' } })
-    fireEvent.blur(passwordInput)
+    fireEvent.input(confirmPasswordInput, { target: { value: '1234567' } })
+    fireEvent.blur(confirmPasswordInput)
     fireEvent.click(submitButton)
     await waitFor(() => {
-      expect(passwordInput).toHaveAttribute('data-error-password', '')
+      expect(confirmPasswordInput).toHaveAttribute(
+        'data-error-confirm-password',
+        'Les mots de passe ne correspondent pas'
+      )
+    })
+
+    fireEvent.input(passwordInput, { target: { value: '123456' } })
+    fireEvent.input(confirmPasswordInput, { target: { value: '123456' } })
+    fireEvent.blur(confirmPasswordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(confirmPasswordInput).toHaveAttribute(
+        'data-error-confirm-password',
+        ''
+      )
     })
   })
 })
