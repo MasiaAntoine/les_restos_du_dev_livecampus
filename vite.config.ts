@@ -16,5 +16,18 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/tests/setup.ts',
+    coverage: {
+      provider: 'v8',
+      exclude: [
+        'node_modules/**',
+        'src/components/ui/**',
+        'src/vite-env.d.ts',
+        'dist/**',
+        'eslint.config.js',
+        'vite.config.ts',
+        'src/config/firebase.config.ts',
+        'src/main.tsx',
+      ],
+    },
   },
 } as UserConfig)
