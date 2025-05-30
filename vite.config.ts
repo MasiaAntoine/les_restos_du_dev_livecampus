@@ -29,6 +29,7 @@ export default defineConfig({
         'src/main.tsx',
         'src/models/**',
         'src/App.tsx',
+        'src/router/index.tsx',
       ],
     },
   },
