@@ -1,10 +1,44 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, test, expect, vi } from 'vitest'
+import type { Mock } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import LoginPage from '@/pages/login'
-import { ServicesContext } from '@/contexts/contexts'
+import { ServicesContext, type Services } from '@/contexts/contexts'
 import { toast } from 'sonner'
+
+// Définition du type pour les membres privés
+type PrivateMembers = {
+  '#firebaseService': unknown
+  '#userService': unknown
+  '#setcurrentUser': Mock
+}
+
+type MockedUserService = Omit<Services['userService'], '#firebaseService'> & {
+  '#firebaseService'?: unknown
+}
+
+type MockedRecipesService = Omit<Services['recipesService'], '#fs'> & {
+  '#fs'?: unknown
+}
+
+type MockedIngredientsService = Omit<Services['ingredientsService'], '#fs'> & {
+  '#fs'?: unknown
+}
+
+type MockedAuthService = {
+  [P in keyof Services['authService']]: Services['authService'][P] extends Function
+    ? Mock
+    : Services['authService'][P]
+} & PrivateMembers
+
+type MockServices = {
+  authService: MockedAuthService
+  userService: MockedUserService
+  recipesService: MockedRecipesService
+  ingredientsService: MockedIngredientsService
+  currentUser: Services['currentUser']
+}
 
 vi.mock('sonner', () => ({
   toast: {
@@ -15,16 +49,30 @@ vi.mock('sonner', () => ({
 
 describe('LoginPage', () => {
   const setup = () => {
-    const mockServices = {
+    const mockServices: MockServices = {
       authService: {
         signIn: vi.fn(),
+        signOut: vi.fn(),
+        register: vi.fn(),
+        '#firebaseService': {},
+        '#userService': {},
+        '#setcurrentUser': vi.fn(),
       },
-      userService: {},
+      userService: {
+        getUserByUid: vi.fn(),
+        createUser: vi.fn(),
+      },
       recipesService: {
         getAllRecipes: vi.fn(),
+        getRecipeById: vi.fn(),
+        getRecipesByAuthor: vi.fn(),
+        createRecipe: vi.fn(),
+        updateRecipe: vi.fn(),
+        deleteRecipe: vi.fn(),
       },
       ingredientsService: {
         getAllIngredients: vi.fn(),
+        getIngredientById: vi.fn(),
       },
       currentUser: null,
     }
@@ -32,7 +80,7 @@ describe('LoginPage', () => {
     return {
       mockServices,
       ...render(
-        <ServicesContext.Provider value={mockServices}>
+        <ServicesContext.Provider value={mockServices as unknown as Services}>
           <BrowserRouter>
             <LoginPage />
           </BrowserRouter>
@@ -164,10 +212,10 @@ describe('LoginPage', () => {
     const passwordInput = screen.getByTestId('input-password')
     const submitButton = screen.getByTestId('login-submit')
 
-    mockServices.authService.signIn.mockResolvedValueOnce()
-    mockServices.recipesService.getAllRecipes = vi
-      .fn()
-      .mockResolvedValueOnce([])
+    ;(mockServices.authService.signIn as Mock).mockResolvedValueOnce({})
+    ;(mockServices.recipesService.getAllRecipes as Mock).mockResolvedValueOnce(
+      []
+    )
 
     fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.input(passwordInput, { target: { value: 'password123' } })
