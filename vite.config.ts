@@ -27,6 +27,8 @@ export default defineConfig({
         'vite.config.ts',
         'src/config/firebase.config.ts',
         'src/main.tsx',
+        'src/models/**',
+        'src/App.tsx',
       ],
     },
   },

@@ -4,14 +4,6 @@ import { describe, test, expect, vi } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import RegisterPage from '@/pages/register'
 import { ServicesContext } from '@/contexts/contexts'
-import { toast } from 'sonner'
-
-vi.mock('sonner', () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}))
 
 describe('RegisterPage', () => {
   const setup = () => {
@@ -194,6 +186,34 @@ describe('RegisterPage', () => {
       expect(confirmPasswordInput).toHaveAttribute(
         'data-error-confirm-password',
         ''
+      )
+    })
+  })
+
+  test('devrait gérer une inscription réussie', async () => {
+    const { mockServices } = setup()
+    const usernameInput = screen.getByTestId('input-username')
+    const emailInput = screen.getByTestId('input-email')
+    const passwordInput = screen.getByTestId('input-password')
+    const confirmPasswordInput = screen.getByTestId('input-confirm-password')
+    const submitButton = screen.getByTestId('register-submit')
+
+    mockServices.authService.register.mockResolvedValueOnce()
+
+    // Remplir les champs
+    fireEvent.input(usernameInput, { target: { value: 'testuser' } })
+    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
+    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.input(confirmPasswordInput, {
+      target: { value: 'password123' },
+    })
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(mockServices.authService.register).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+        'testuser'
       )
     })
   })
