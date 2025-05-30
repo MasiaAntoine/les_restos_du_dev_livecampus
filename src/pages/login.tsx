@@ -90,14 +90,16 @@ export default function LoginPage() {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
                       placeholder="john@example.com"
+                      data-error-email={fieldState.error?.message || ''}
                       {...field}
+                      data-testid="input-email"
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,7 +110,7 @@ export default function LoginPage() {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
@@ -116,7 +118,9 @@ export default function LoginPage() {
                       <Input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
+                        data-error-password={fieldState.error?.message || ''}
                         {...field}
+                        data-testid="input-password"
                       />
                       <button
                         type="button"
@@ -147,7 +151,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" data-testid="login-submit">
               Se connecter
             </Button>
           </form>

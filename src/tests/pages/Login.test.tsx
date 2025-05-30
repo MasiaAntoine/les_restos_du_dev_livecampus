@@ -57,65 +57,84 @@ describe('LoginPage', () => {
     expect(passwordInput).toHaveAttribute('type', 'password')
   })
 
-  test('devrait valider correctement le champ email', async () => {
+  test('email vide', async () => {
     setup()
-    const emailInput = screen.getByPlaceholderText('john@example.com')
-    const submitButton = screen.getByRole('button', { name: /se connecter/i })
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('login-submit')
 
-    fireEvent.input(emailInput, { target: { value: '' } })
-    fireEvent.blur(emailInput)
     fireEvent.click(submitButton)
-    expect(
-      await screen.findByText(/Veuillez entrer une adresse email valide/i)
-    ).toBeInTheDocument()
-
-    fireEvent.input(emailInput, { target: { value: 'emailinvalide' } })
-    fireEvent.blur(emailInput)
-    fireEvent.click(submitButton)
-    expect(
-      await screen.findByText(/Veuillez entrer une adresse email valide/i)
-    ).toBeInTheDocument()
-
-    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.blur(emailInput)
     await waitFor(() => {
-      expect(
-        screen.queryByText(/Veuillez entrer une adresse email valide/i)
-      ).not.toBeInTheDocument()
+      expect(emailInput).toHaveAttribute(
+        'data-error-email',
+        'Veuillez entrer une adresse email valide.'
+      )
+    })
+  })
+
+  test('email invalide', async () => {
+    setup()
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('login-submit')
+
+    fireEvent.input(emailInput, { target: { value: 'test@failed' } })
+    fireEvent.blur(emailInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute(
+        'data-error-email',
+        'Veuillez entrer une adresse email valide.'
+      )
+    })
+  })
+
+  test('email valide', async () => {
+    setup()
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('login-submit')
+
+    fireEvent.blur(emailInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute('data-error-email', '')
+    })
+  })
+
+  test('Le mot de passe doit contenir au moins 6 caractères', async () => {
+    setup()
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('login-submit')
+
+    fireEvent.input(passwordInput, { target: { value: '' } })
+    fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(passwordInput).toHaveAttribute(
+        'data-error-password',
+        'Le mot de passe doit contenir au moins 6 caractères.'
+      )
+    })
+
+    fireEvent.input(passwordInput, { target: { value: '12345' } })
+    fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(passwordInput).toHaveAttribute(
+        'data-error-password',
+        'Le mot de passe doit contenir au moins 6 caractères.'
+      )
     })
   })
 
   test('devrait valider correctement le champ mot de passe', async () => {
     setup()
-    const passwordInput = screen.getByPlaceholderText('••••••••')
-    const submitButton = screen.getByRole('button', { name: /se connecter/i })
-
-    fireEvent.input(passwordInput, { target: { value: '' } })
-    fireEvent.blur(passwordInput)
-    fireEvent.click(submitButton)
-    expect(
-      await screen.findByText(
-        /Le mot de passe doit contenir au moins 6 caractères/i
-      )
-    ).toBeInTheDocument()
-
-    fireEvent.input(passwordInput, { target: { value: '12345' } })
-    fireEvent.blur(passwordInput)
-    fireEvent.click(submitButton)
-    expect(
-      await screen.findByText(
-        /Le mot de passe doit contenir au moins 6 caractères/i
-      )
-    ).toBeInTheDocument()
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('login-submit')
 
     fireEvent.input(passwordInput, { target: { value: '123456' } })
     fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
     await waitFor(() => {
-      expect(
-        screen.queryByText(
-          /Le mot de passe doit contenir au moins 6 caractères/i
-        )
-      ).not.toBeInTheDocument()
+      expect(passwordInput).toHaveAttribute('data-error-password', '')
     })
   })
 })
