@@ -2,22 +2,14 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, test, expect, vi } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
-import LoginPage from '@/pages/login'
+import RegisterPage from '@/pages/register'
 import { ServicesContext } from '@/contexts/contexts'
-import { toast } from 'sonner'
 
-vi.mock('sonner', () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}))
-
-describe('LoginPage', () => {
+describe('RegisterPage', () => {
   const setup = () => {
     const mockServices = {
       authService: {
-        signIn: vi.fn(),
+        register: vi.fn(),
       },
       userService: {},
       recipesService: {},
@@ -28,7 +20,7 @@ describe('LoginPage', () => {
       ...render(
         <ServicesContext.Provider value={mockServices}>
           <BrowserRouter>
-            <LoginPage />
+            <RegisterPage />
           </BrowserRouter>
         </ServicesContext.Provider>
       ),
@@ -37,11 +29,18 @@ describe('LoginPage', () => {
 
   test("devrait afficher des messages d'erreur lors de la soumission d'un formulaire vide", async () => {
     setup()
-    const submitButton = screen.getByTestId('login-submit')
+    const submitButton = screen.getByTestId('register-submit')
+
+    const usernameInput = screen.getByTestId('input-username')
     const emailInput = screen.getByTestId('input-email')
     const passwordInput = screen.getByTestId('input-password')
+    const confirmPasswordInput = screen.getByTestId('input-confirm-password')
+
     fireEvent.blur(emailInput)
+    fireEvent.blur(usernameInput)
     fireEvent.blur(passwordInput)
+    fireEvent.blur(confirmPasswordInput)
+
     fireEvent.click(submitButton)
 
     await waitFor(() => {
@@ -49,32 +48,55 @@ describe('LoginPage', () => {
         'data-error-email',
         'Veuillez entrer une adresse email valide.'
       )
+      expect(usernameInput).toHaveAttribute(
+        'data-error-username',
+        "Le nom d'utilisateur doit contenir au moins 2 caractères."
+      )
       expect(passwordInput).toHaveAttribute(
         'data-error-password',
         'Le mot de passe doit contenir au moins 6 caractères.'
       )
+      expect(confirmPasswordInput).toHaveAttribute(
+        'data-error-confirm-password',
+        ''
+      )
     })
   })
 
-  test("devrait basculer la visibilité du mot de passe lors du clic sur l'icône œil", () => {
+  test('username invalide', async () => {
     setup()
-    const passwordInput = screen.getByPlaceholderText('••••••••')
-    expect(passwordInput).toHaveAttribute('type', 'password')
+    const submitButton = screen.getByTestId('register-submit')
+    const usernameInput = screen.getByTestId('input-username')
 
-    const toggleButton = screen.getByRole('button', { name: '' })
-    fireEvent.click(toggleButton)
+    fireEvent.blur(usernameInput)
+    fireEvent.click(submitButton)
 
-    expect(passwordInput).toHaveAttribute('type', 'text')
+    await waitFor(() => {
+      expect(usernameInput).toHaveAttribute(
+        'data-error-username',
+        "Le nom d'utilisateur doit contenir au moins 2 caractères."
+      )
+    })
+  })
 
-    fireEvent.click(toggleButton)
+  test('username valide', async () => {
+    setup()
+    const submitButton = screen.getByTestId('register-submit')
+    const usernameInput = screen.getByTestId('input-username')
 
-    expect(passwordInput).toHaveAttribute('type', 'password')
+    fireEvent.change(usernameInput, { target: { value: 'validUsername' } })
+    fireEvent.blur(usernameInput)
+    fireEvent.click(submitButton)
+
+    await waitFor(() => {
+      expect(usernameInput).toHaveAttribute('data-error-username', '')
+    })
   })
 
   test('email vide', async () => {
     setup()
     const emailInput = screen.getByTestId('input-email')
-    const submitButton = screen.getByTestId('login-submit')
+    const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.click(submitButton)
     await waitFor(() => {
@@ -88,7 +110,7 @@ describe('LoginPage', () => {
   test('email invalide', async () => {
     setup()
     const emailInput = screen.getByTestId('input-email')
-    const submitButton = screen.getByTestId('login-submit')
+    const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.input(emailInput, { target: { value: 'test@failed' } })
     fireEvent.blur(emailInput)
@@ -104,7 +126,7 @@ describe('LoginPage', () => {
   test('email valide', async () => {
     setup()
     const emailInput = screen.getByTestId('input-email')
-    const submitButton = screen.getByTestId('login-submit')
+    const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.blur(emailInput)
     fireEvent.click(submitButton)
@@ -116,7 +138,7 @@ describe('LoginPage', () => {
   test('Le mot de passe doit contenir au moins 6 caractères', async () => {
     setup()
     const passwordInput = screen.getByTestId('input-password')
-    const submitButton = screen.getByTestId('login-submit')
+    const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.input(passwordInput, { target: { value: '' } })
     fireEvent.blur(passwordInput)
@@ -139,91 +161,60 @@ describe('LoginPage', () => {
     })
   })
 
-  test('devrait valider correctement le champ mot de passe', async () => {
+  test('devrait valider la correspondance des mots de passe', async () => {
     setup()
     const passwordInput = screen.getByTestId('input-password')
-    const submitButton = screen.getByTestId('login-submit')
+    const confirmPasswordInput = screen.getByTestId('input-confirm-password')
+    const submitButton = screen.getByTestId('register-submit')
 
     fireEvent.input(passwordInput, { target: { value: '123456' } })
-    fireEvent.blur(passwordInput)
+    fireEvent.input(confirmPasswordInput, { target: { value: '1234567' } })
+    fireEvent.blur(confirmPasswordInput)
     fireEvent.click(submitButton)
     await waitFor(() => {
-      expect(passwordInput).toHaveAttribute('data-error-password', '')
-    })
-  })
-
-  test('devrait gérer une connexion réussie', async () => {
-    const { mockServices } = setup()
-    const emailInput = screen.getByTestId('input-email')
-    const passwordInput = screen.getByTestId('input-password')
-    const submitButton = screen.getByTestId('login-submit')
-
-    mockServices.authService.signIn.mockResolvedValueOnce()
-    mockServices.recipesService.getAllRecipes = vi
-      .fn()
-      .mockResolvedValueOnce([])
-
-    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.input(passwordInput, { target: { value: 'password123' } })
-    fireEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockServices.authService.signIn).toHaveBeenCalledWith(
-        'test@example.com',
-        'password123'
+      expect(confirmPasswordInput).toHaveAttribute(
+        'data-error-confirm-password',
+        'Les mots de passe ne correspondent pas'
       )
-      expect(toast.success).toHaveBeenCalledWith('Connexion réussie')
     })
-  })
 
-  test('devrait gérer une erreur de connexion', async () => {
-    const { mockServices } = setup()
-    const emailInput = screen.getByTestId('input-email')
-    const passwordInput = screen.getByTestId('input-password')
-    const submitButton = screen.getByTestId('login-submit')
-
-    mockServices.authService.signIn.mockRejectedValueOnce(
-      new Error('Erreur de connexion')
-    )
-    mockServices.recipesService.getAllRecipes = vi
-      .fn()
-      .mockResolvedValueOnce([])
-
-    fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
-    fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.input(passwordInput, { target: { value: '123456' } })
+    fireEvent.input(confirmPasswordInput, { target: { value: '123456' } })
+    fireEvent.blur(confirmPasswordInput)
     fireEvent.click(submitButton)
-
     await waitFor(() => {
-      expect(mockServices.authService.signIn).toHaveBeenCalledWith(
-        'test@example.com',
-        'password123'
+      expect(confirmPasswordInput).toHaveAttribute(
+        'data-error-confirm-password',
+        ''
       )
-      expect(toast.error).toHaveBeenCalledWith('Erreur lors de la connexion')
     })
   })
 
-  test('ne devrait pas procéder si les services ne sont pas disponibles', async () => {
-    vi.clearAllMocks()
-
-    render(
-      <ServicesContext.Provider value={null}>
-        <BrowserRouter>
-          <LoginPage />
-        </BrowserRouter>
-      </ServicesContext.Provider>
-    )
-
+  test('devrait gérer une inscription réussie', async () => {
+    const { mockServices } = setup()
+    const usernameInput = screen.getByTestId('input-username')
     const emailInput = screen.getByTestId('input-email')
     const passwordInput = screen.getByTestId('input-password')
-    const submitButton = screen.getByTestId('login-submit')
+    const confirmPasswordInput = screen.getByTestId('input-confirm-password')
+    const submitButton = screen.getByTestId('register-submit')
 
+    mockServices.authService.register.mockResolvedValueOnce()
+
+    // Remplir les champs
+    fireEvent.input(usernameInput, { target: { value: 'testuser' } })
     fireEvent.input(emailInput, { target: { value: 'test@example.com' } })
     fireEvent.input(passwordInput, { target: { value: 'password123' } })
+    fireEvent.input(confirmPasswordInput, {
+      target: { value: 'password123' },
+    })
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      expect(toast.success).not.toHaveBeenCalled()
-      expect(toast.error).not.toHaveBeenCalled()
+      expect(mockServices.authService.register).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+        'testuser'
+      )
     })
   })
 })
