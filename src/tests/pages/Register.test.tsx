@@ -100,4 +100,85 @@ describe('RegisterPage', () => {
       expect(usernameInput).toHaveAttribute('data-error-username', '')
     })
   })
+
+  test('email vide', async () => {
+    setup()
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('register-submit')
+
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute(
+        'data-error-email',
+        'Veuillez entrer une adresse email valide.'
+      )
+    })
+  })
+
+  test('email invalide', async () => {
+    setup()
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('register-submit')
+
+    fireEvent.input(emailInput, { target: { value: 'test@failed' } })
+    fireEvent.blur(emailInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute(
+        'data-error-email',
+        'Veuillez entrer une adresse email valide.'
+      )
+    })
+  })
+
+  test('email valide', async () => {
+    setup()
+    const emailInput = screen.getByTestId('input-email')
+    const submitButton = screen.getByTestId('register-submit')
+
+    fireEvent.blur(emailInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(emailInput).toHaveAttribute('data-error-email', '')
+    })
+  })
+
+  test('Le mot de passe doit contenir au moins 6 caractères', async () => {
+    setup()
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('register-submit')
+
+    fireEvent.input(passwordInput, { target: { value: '' } })
+    fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(passwordInput).toHaveAttribute(
+        'data-error-password',
+        'Le mot de passe doit contenir au moins 6 caractères.'
+      )
+    })
+
+    fireEvent.input(passwordInput, { target: { value: '12345' } })
+    fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(passwordInput).toHaveAttribute(
+        'data-error-password',
+        'Le mot de passe doit contenir au moins 6 caractères.'
+      )
+    })
+  })
+
+  test('devrait valider correctement le champ mot de passe', async () => {
+    setup()
+    const passwordInput = screen.getByTestId('input-password')
+    const submitButton = screen.getByTestId('register-submit')
+
+    fireEvent.input(passwordInput, { target: { value: '123456' } })
+    fireEvent.blur(passwordInput)
+    fireEvent.click(submitButton)
+    await waitFor(() => {
+      expect(passwordInput).toHaveAttribute('data-error-password', '')
+    })
+  })
 })
